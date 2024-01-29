@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/process")
+@RequestMapping("/api/process")
 public class AirProcessController {
 
     @Autowired

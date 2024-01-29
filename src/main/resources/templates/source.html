@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<div th:replace="fragments/head :: head('Source Manage')"></div>
+
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <div th:replace="fragments/sliderbar :: sliderbar"></div>
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <div th:replace="fragments/topbar :: topbar"></div>
+
+                <!-- Create/Edit Form -->
+
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h2>CRUD Example with API</h2>
+
+                            <!-- Create/Edit Form -->
+                            <form id="itemForm">
+                                <div class="mb-3">
+                                    <label for="itemName" class="form-label">Item Name:</label>
+                                    <input type="text" class="form-control" id="itemName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="itemLink" class="form-label">Item Link:</label>
+                                    <input type="text" class="form-control" id="itemLink" required>
+                                </div>
+                                <input type="hidden" id="itemId">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+
+                        <div class="col-md-6">
+                            <!-- Read/List Items -->
+                            <h3>Item List</h3>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Link</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody id="itemList">
+                                <!-- List items will be dynamically added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- End of Main Content -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <div th:replace="fragments/bottom :: bottom"></div>
+    <script>
+        var apiUrl = "https://jsonplaceholder.typicode.com/posts"; // Giả lập API endpoint
+        var items = [];
+
+        // Function to render items in the table
+        function renderTable() {
+            var tableBody = $("#itemList");
+            tableBody.empty();
+
+            items.forEach(function(item) {
+                tableBody.append(
+                    `<tr>
+                    <th scope="row">${item.id}</th>
+                    <td>${item.name}</td>
+                    <td>${item.link}</td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm mx-1" onclick="editItem(${item.id})">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
+                    </td>
+                </tr>`
+                );
+            });
+        }
+
+        // Function to handle form submission for creating/editing items
+        $("#itemForm").submit(function(event) {
+            event.preventDefault();
+
+            var itemName = $("#itemName").val();
+            var itemLink = $("#itemLink").val();
+            var itemId = $("#itemId").val();
+
+            if (itemId) {
+                // Edit existing item
+                var index = items.findIndex(item => item.id === parseInt(itemId));
+                if (index !== -1) {
+                    items[index].name = itemName;
+                    items[index].link = itemLink;
+                }
+            } else {
+                // Create new item
+                var newItemId = items.length + 1;
+                items.push({ id: newItemId, name: itemName, link: itemLink });
+            }
+
+            renderTable();
+            resetForm();
+        });
+
+        // Function to handle item deletion
+        function deleteItem(itemId) {
+            items = items.filter(item => item.id !== itemId);
+            renderTable();
+        }
+
+        // Function to handle item editing
+        function editItem(itemId) {
+            var item = items.find(item => item.id === itemId);
+            if (item) {
+                $("#itemId").val(item.id);
+                $("#itemName").val(item.name);
+                $("#itemLink").val(item.link);
+            }
+        }
+
+        // Function to reset the form
+        function resetForm() {
+            $("#itemId").val("");
+            $("#itemName").val("");
+            $("#itemLink").val("");
+        }
+
+        // Function to fetch data from API (simulated)
+        function fetchData() {
+            $.get(apiUrl, function(data) {
+                items = data.slice(0, 5); // Lấy 5 mục đầu tiên để giả lập dữ liệu
+                renderTable();
+            });
+        }
+
+        // Initial rendering of the table
+        fetchData();
+    </script>
+
+</body>
+
+</html>

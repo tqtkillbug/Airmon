@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/air-project/")
+@RequestMapping("/api/air-project/")
 public class AirProjectAPI {
 
 
