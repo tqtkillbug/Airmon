@@ -19,7 +19,6 @@ public class AirProcess {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     @OneToOne
-    @JsonIgnore
     private Address address;
 
     private String info;
