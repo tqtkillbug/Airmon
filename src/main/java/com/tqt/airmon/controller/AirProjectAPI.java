@@ -1,7 +1,7 @@
 package com.tqt.airmon.controller;
 
-import com.tqt.airmon.model.Source;
-import com.tqt.airmon.service.SourceService;
+import com.tqt.airmon.model.AirProject;
+import com.tqt.airmon.service.AirProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,20 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/source/")
-public class SourceAPI {
+@RequestMapping("/air-project/")
+public class AirProjectAPI {
 
 
     @Autowired
-    private SourceService sourceService;
-    @PostMapping()
-    public ResponseEntity<?> insertNewSource(@RequestBody Source sourceNew){
-        return new ResponseEntity<>(sourceService.insert(sourceNew), HttpStatus.CREATED);
+    private AirProjectService airProjectService;
+
+
+    @PostMapping("")
+    public ResponseEntity<?> insertAirProject(@RequestBody AirProject project){
+        return new ResponseEntity<>(airProjectService.insert(project),HttpStatus.CREATED);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> getListSource(){
-        return new ResponseEntity<>(sourceService.getAll(), HttpStatus.CREATED);
+    @GetMapping("list")
+    public ResponseEntity<?> getListProject(){
+        return new ResponseEntity<>(airProjectService.getAll(), HttpStatus.OK);
     }
 
 }

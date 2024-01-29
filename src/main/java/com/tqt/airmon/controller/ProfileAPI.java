@@ -1,7 +1,7 @@
 package com.tqt.airmon.controller;
 
-import com.tqt.airmon.model.Source;
-import com.tqt.airmon.service.SourceService;
+import com.tqt.airmon.model.Profile;
+import com.tqt.airmon.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,20 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/source/")
-public class SourceAPI {
+@RequestMapping("/profile/")
+public class ProfileAPI {
 
 
     @Autowired
-    private SourceService sourceService;
-    @PostMapping()
-    public ResponseEntity<?> insertNewSource(@RequestBody Source sourceNew){
-        return new ResponseEntity<>(sourceService.insert(sourceNew), HttpStatus.CREATED);
+    private ProfileService service;
+
+
+    @PostMapping("")
+    public ResponseEntity<?> insertNewProfile(@RequestBody Profile profile){
+        return new ResponseEntity<>(service.insert(profile),HttpStatus.CREATED);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> getListSource(){
-        return new ResponseEntity<>(sourceService.getAll(), HttpStatus.CREATED);
+    @GetMapping("list")
+    public ResponseEntity<?> getListProfile(){
+        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
 }

@@ -1,19 +1,26 @@
 package com.tqt.airmon.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "air_project")
 @Data
 public class AirProject {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
@@ -21,8 +28,9 @@ public class AirProject {
     private String status;
     @Column(name = "link_source")
     private String linkSource;
-
-    @OneToOne
+    @ManyToOne
     private Source source;
+    @OneToMany(mappedBy = "airProject", cascade = CascadeType.ALL)
+    private List<AirProcess> process = new ArrayList<>();
 
 }
