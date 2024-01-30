@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/air-project/")
+@RequestMapping("/api/air-project")
 public class AirProjectAPI {
 
 
@@ -25,7 +25,7 @@ public class AirProjectAPI {
         return new ResponseEntity<>(airProjectService.insert(project),HttpStatus.CREATED);
     }
 
-    @GetMapping("list")
+    @GetMapping("/list")
     public ResponseEntity<?> getListProject(){
         return new ResponseEntity<>(airProjectService.getAll(), HttpStatus.OK);
     }

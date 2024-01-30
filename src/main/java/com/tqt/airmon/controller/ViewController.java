@@ -15,7 +15,7 @@ public class ViewController {
 
     @GetMapping("air-project")
     public String airProject(){
-        return "index";
+        return "air-project";
     }
 
     @GetMapping("/source")
@@ -26,13 +26,13 @@ public class ViewController {
 
     @GetMapping("profile")
     public String profile(){
-        return "index";
+        return "profile";
     }
 
 
     @GetMapping("wallet")
     public String wallet(){
-        return "index";
+        return "wallet";
     }
 
 }

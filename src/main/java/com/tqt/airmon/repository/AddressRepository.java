@@ -10,4 +10,8 @@ import java.util.List;
 public interface AddressRepository extends JpaRepository<Address,Long> {
 
     List<Address> findAllByProfileId(Long id);
+
+    List<Address> findAllByProfileIdAndType(Long id,String type);
+
+    List<Address> findAllByType(String type);
 }

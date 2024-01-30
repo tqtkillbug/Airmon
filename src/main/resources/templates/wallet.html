@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<div th:replace="fragments/head :: head('Profile Manage')"></div>
+<!-- Custom styles for this page -->
+<link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<style>
+    .custom-select-box {
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    /* Optional: Style for focused state */
+    .custom-select-box:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+</style>
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <div th:replace="fragments/sliderbar :: sliderbar"></div>
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <div th:replace="fragments/topbar :: topbar"></div>
+
+                <!-- Create/Edit Form -->
+
+                <div class="container-fluid mt-1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- Open Modal Button for Adding New Wallet -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h4 class="text-center">Wallet Management</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#walletModal">
+                                                Add New Wallet
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exportModal">
+                                                Export Wallet
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#importModal">
+                                                Import Wallet
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#walletModal">
+                                                Add New Wallet
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#walletModal">
+                                                Add New Wallet
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#walletModal">
+                                                Add New Wallet
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- List Wallets DataTable -->
+                                    <h3 class="mb-4">List Wallets</h3>
+                                    <table class="table table-striped" id="walletTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Public Key</th>
+                                            <th scope="col">Private Key</th>
+                                            <th scope="col">Account Name</th>
+                                            <th scope="col">Profile</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="walletList">
+                                        <!-- Wallets will be dynamically added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <!-- End of Main Content -->
+            </div>
+        </div>
+        <!-- Profile Modal -->
+        <!-- Profile Modal -->
+            <div class="modal fade" id="walletModal" tabindex="-1" role="dialog" aria-labelledby="walletModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="walletModalLabel">Wallet Form</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Create/Edit Wallet Form -->
+                            <form id="walletForm">
+                                <div class="mb-3">
+                                    <label for="publicKey" class="form-label">Public Key:</label>
+                                    <input type="text" class="form-control" id="publicKey" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="privateKey" class="form-label">Private Key:</label>
+                                    <input type="text" class="form-control" id="privateKey" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="accountName" class="form-label">Account Name:</label>
+                                    <input type="text" class="form-control" id="accountName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="profileSelect" class="form-label">Select Profile:</label>
+                                    <select class="form-select custom-select-box" id="profileSelect" required>
+                                        <!-- Profiles will be dynamically added here -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="typeSelect" class="form-label">Select Type:</label>
+                                    <select class="form-select custom-select-box" id="typeSelect" required>
+                                        <option value="CN">CN</option>
+                                        <option value="FILL">FILL</option>
+                                        <option value="MAIN">MAIN</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" id="walletId">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="walletModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="walletExportModalLabel">Export Wallet</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Create/Edit Wallet Form -->
+                        <form id="walletExportForm">
+                            <div class="mb-3">
+                                <label for="profileSelect" class="form-label">Select Profile:</label>
+                                <select class="form-select custom-select-box" id="profileExportSelect" required>
+                                    <option value="0">All Profile</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="typeSelect" class="form-label">Select Type:</label>
+                                <select class="form-select custom-select-box" id="typeExportSelect" required>
+                                    <option value=" ">ALL</option>
+                                    <option value="CN">CN</option>
+                                    <option value="FILL">FILL</option>
+                                    <option value="MAIN">MAIN</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Export</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="privateKeyExportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Private Key</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <input type="text" disabled class="form-control" id="privateKeyModal"  aria-describedby="button-addon2">
+                            <button class="btn btn-outline-secondary" type="button" id="button-copy-private">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+        <div class="modal fade" id="showExportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">List Wallet Address</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <div class="text-gray-600" id="listWalletAddr"> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="walletModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="walletImportModalLabel">Import Wallet</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Create/Edit Wallet Form -->
+                        <form id="walletImportForm">
+                            <div class="mb-3">
+                                <label for="profileSelect" class="form-label">Select Profile:</label>
+                                <select class="form-select custom-select-box" id="profileImportSelect" required>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputFileWalletJson">Upload</label>
+                                <input type="file" class="form-control" id="inputFileWalletJson">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Import</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <div th:replace="fragments/bottom :: bottom"></div>
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Populate profile options in the select box from API
+                $.ajax({
+                    type: "GET",
+                    url: "api/profile/list", // Replace with your API endpoint for profiles
+                    success: function (data) {
+                        var profileSelect = $("#profileSelect");
+                        var profileExportSelect = $("#profileExportSelect");
+                        var profileImportSelect = $("#profileImportSelect");
+                        data.forEach(function (profile) {
+                            profileSelect.append(`<option value="${profile.id}">${profile.name}</option>`);
+                            profileExportSelect.append(`<option value="${profile.id}">${profile.name}</option>`);
+                            profileImportSelect.append(`<option value="${profile.id}">${profile.name}</option>`);
+                        });
+                    },
+                    error: function (error) {
+                        console.log("Error:", error);
+                    }
+                });
+
+                // DataTable initialization
+                var walletTable = $('#walletTable').DataTable({
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    processing: true,
+                    serverSide: false, // Set to true if you want server-side processing
+                    ajax: {
+                        url: 'api/wallet/list', // Replace with your API endpoint for wallets
+                        type: 'GET',
+                        dataSrc: ''
+                    },
+                    columns: [
+                        { data: 'id' },
+                        { data: 'publicKey' },
+                        { data: 'privateKey' },
+                        { data: 'accountName' },
+                        { data: 'profile.name' }, // Assuming profile has a 'name' property
+                        { data: 'type' },
+                        {
+                            data: null,
+                            render: function (data, type, row) {
+                                return '<button class="btn btn-warning edit-item mr-1" data-id="' + row.id + '" data-toggle="modal" data-target="#walletModal">Edit</button>' +
+                                    '<button class="btn btn-danger delete-item mr-1" data-id="' + row.id + '">Delete</button>' +
+                                    '<button class="btn btn-primary export-private-key mr-1" data-id="' + row.id + '">Private Key</button>';
+                            }
+                        }
+                    ]
+                });
+
+                // Submit form to add or update wallet
+                $("#walletForm").submit(function (event) {
+                    event.preventDefault();
+                    var formData = {
+                        id: $("#walletId").val(),
+                        publicKey: $("#publicKey").val(),
+                        privateKey: $("#privateKey").val(),
+                        accountName: $("#accountName").val(),
+                        profile:{
+                            id: $("#profileSelect").val()
+                        },
+                        type: $("#typeSelect").val()
+                    };
+                    var isUpdate = formData.id !== "";
+                    $.ajax({
+                        type: isUpdate ? "PUT" : "POST",
+                        url: isUpdate ? "api/wallet/" + formData.id : "api/wallet",
+                        contentType: "application/json",
+                        data: JSON.stringify(formData),
+                        success: function () {
+                            clearForm();
+                            walletTable.ajax.reload();
+                            walletTable.draw();
+                            $("#walletModal").modal("hide");
+                        },
+                        error: function (error) {
+                            console.log("Error:", error);
+                        }
+                    });
+                });
+
+                $("#walletExportForm").submit(function (event) {
+                    event.preventDefault();
+                       let idProfile = $("#profileExportSelect").val();
+                       let type = $("#typeExportSelect").val();
+                    $("#listWalletAddr").html("");
+                    $.ajax({
+                        type: "GET",
+                        url: "api/wallet/export?idProfile=" + idProfile+ "&type=" + type,
+                        success: function (data) {
+                            for (let wa of data) {
+                                $("#listWalletAddr").append(wa);
+                                $("#listWalletAddr").append("<br/>");
+                            }
+                            $("#exportModal").modal("hide");
+                          $("#showExportModal").modal("show");
+                        },
+                        error: function (error) {
+                            console.log("Error:", error);
+                        }
+                    });
+                })
+
+                $("#walletImportForm").submit(function (event) {
+                    event.preventDefault();
+                    let idProfile = $("#profileImportSelect").val();
+
+                    // $.ajax({
+                    //     type: "GET",
+                    //     url: "api/wallet/export?idProfile=" + idProfile+ "&type=" + type,
+                    //     success: function (data) {
+                    //         for (let wa of data) {
+                    //             $("#listWalletAddr").append(wa);
+                    //             $("#listWalletAddr").append("<br/>");
+                    //         }
+                    //         $("#exportModal").modal("hide");
+                    //         $("#showExportModal").modal("show");
+                    //     },
+                    //     error: function (error) {
+                    //         console.log("Error:", error);
+                    //     }
+                    // });
+                });
+
+                $('#walletTable tbody').on('click', 'button.edit-item', function () {
+                    var data = walletTable.row($(this).parents('tr')).data();
+                    $('#walletId').val(data.id);
+                    $('#publicKey').val(data.publicKey);
+                    $('#privateKey').val(data.privateKey);
+                    $('#accountName').val(data.accountName);
+                    $('#profileSelect').val(data.profile.id);
+                    $('#typeSelect').val(data.type);
+                    $('.modal-title').text('Edit Wallet');
+                });
+                $('#walletTable tbody').on('click', 'button.export-private-key', function () {
+                    var data = walletTable.row($(this).parents('tr')).data();
+                    $.ajax({
+                        type: "GET",
+                        url: "api/wallet/" + data.id,
+                        success: function (response) {
+                            $("#privateKeyModal").val(response.privateKey);
+                            $("#privateKeyExportModal").modal().show();
+                        },
+                        error: function (error) {
+                            console.log("Error:", error);
+                        }
+                    });
+                });
+
+                $("#button-copy-private").on("click", function (){
+                    var copyText = document.getElementById("privateKeyModal");
+                    copyText.select();
+                    copyText.setSelectionRange(0, 99999);
+                     document.execCommand("copy");
+                })
+                // Delete wallet when clicking on Delete button
+                $('#walletTable tbody').on('click', 'button.delete-item', function () {
+                    var data = walletTable.row($(this).parents('tr')).data();
+                    var confirmDelete = confirm("Are you sure you want to delete this wallet?");
+                    if (confirmDelete) {
+                        // Send API request to delete wallet
+                        $.ajax({
+                            type: "DELETE",
+                            url: "api/wallet/" + data.id,
+                            success: function () {
+                                // Draw DataTable to update pagination
+                                walletTable.ajax.reload();
+                                walletTable.draw();
+                            },
+                            error: function (error) {
+                                console.log("Error:", error);
+                            }
+                        });
+                    }
+                });
+
+                // Rest of your code...
+
+                // Clear form fields
+                function clearForm() {
+                    $("#walletId").val("");
+                    $("#publicKey").val("");
+                    $("#privateKey").val("");
+                    $("#accountName").val("");
+                    $("#profileSelect").val("");
+                    $("#typeSelect").val("");
+                    // Change modal title back to default
+                    $('.modal-title').text('Wallet Form');
+                }
+            });
+        </script>
+</body>
+
+</html>
