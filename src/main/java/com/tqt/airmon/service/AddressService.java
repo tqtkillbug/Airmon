@@ -1,6 +1,8 @@
 package com.tqt.airmon.service;
 
 import com.tqt.airmon.model.Address;
+import com.tqt.airmon.model.Profile;
+import com.tqt.airmon.model.dto.ImportWalletsDTO;
 import com.tqt.airmon.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +19,22 @@ public class AddressService {
     @Autowired
     private AddressRepository repository;
 
+    @Autowired
+    private ProfileService profileService;
+
     public Address insert(Address address){
         return repository.save(address);
     }
 
     public List<Address> getAll(){
         List<Address> listWallet = repository.findAll();
-        listWallet.forEach(w -> w.setPrivateKey("*******************"));
+        listWallet.forEach(w -> {
+            if (w.getPrivateKey() == null) {
+                w.setPrivateKey("****NONSET****");
+            } else{
+                w.setPrivateKey("*******************");
+            }
+        } );
         return repository.findAll();
     }
 
@@ -66,4 +77,13 @@ public class AddressService {
       return list.stream().map(Address::getPublicKey).collect(Collectors.toList());
     }
 
+    public void importListWallet(ImportWalletsDTO importWalletsDTO) {
+        Profile profile = profileService.getById(importWalletsDTO.getIdProfile());
+        List<Address> addressList = importWalletsDTO.getListWallet();
+        for (Address address : addressList) {
+            address.setProfile(profile);
+            address.setType("N/A");
+        }
+        repository.saveAll(addressList);
+    }
 }

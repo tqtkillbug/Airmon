@@ -309,9 +309,9 @@
                         {
                             data: null,
                             render: function (data, type, row) {
-                                return '<button class="btn btn-warning edit-item mr-1" data-id="' + row.id + '" data-toggle="modal" data-target="#walletModal">Edit</button>' +
-                                    '<button class="btn btn-danger delete-item mr-1" data-id="' + row.id + '">Delete</button>' +
-                                    '<button class="btn btn-primary export-private-key mr-1" data-id="' + row.id + '">Private Key</button>';
+                                return '<button class="btn btn-warning edit-item mr-1" data-id="' + row.id + '" data-toggle="modal" data-target="#walletModal"><i class="far fa-edit"></i></button>' +
+                                    '<button class="btn btn-danger delete-item mr-1" data-id="' + row.id + '"><i class="fas fa-backspace"></i></button>' +
+                                    '<button class="btn btn-primary export-private-key mr-1" data-id="' + row.id + '"><i class="fas fa-key"></i></button>';
                             }
                         }
                     ]
@@ -370,26 +370,64 @@
                     });
                 })
 
-                $("#walletImportForm").submit(function (event) {
+                $("#walletImportForm").submit(async function (event) {
                     event.preventDefault();
                     let idProfile = $("#profileImportSelect").val();
+                    var fileInput = document.getElementById('inputFileWalletJson');
+                    var file = fileInput.files[0];
+                    let listWallet = await readFileAsync(file);
 
-                    // $.ajax({
-                    //     type: "GET",
-                    //     url: "api/wallet/export?idProfile=" + idProfile+ "&type=" + type,
-                    //     success: function (data) {
-                    //         for (let wa of data) {
-                    //             $("#listWalletAddr").append(wa);
-                    //             $("#listWalletAddr").append("<br/>");
-                    //         }
-                    //         $("#exportModal").modal("hide");
-                    //         $("#showExportModal").modal("show");
-                    //     },
-                    //     error: function (error) {
-                    //         console.log("Error:", error);
-                    //     }
-                    // });
+                    let importData = {
+                        idProfile: idProfile,
+                        listWallet : listWallet
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "api/wallet/import",
+                        contentType: "application/json",
+                        data: JSON.stringify(importData),
+                        success: function (data) {
+
+                        },
+                        error: function (error) {
+                            console.log("Error:", error);
+                        }
+                    });
                 });
+
+                function readFileAsync(file) {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const jsonData = JSON.parse(e.target.result);
+                            const listWallet = getMetaMaskAddresses(jsonData);
+                            resolve(listWallet);
+                        };
+
+                        reader.onerror = function (error) {
+                            reject(error);
+                        };
+                        reader.readAsText(file);
+                    });
+                }
+
+
+                function getMetaMaskAddresses(jsonData) {
+                    const addresses = [];
+                    if (jsonData && jsonData.metamask && jsonData.metamask.identities) {
+                        const identities = jsonData.metamask.identities;
+                        for (const address in identities) {
+                            if (identities.hasOwnProperty(address)) {
+                                let wallet = {
+                                    publicKey : identities[address].address,
+                                    accountName: identities[address].name
+                                }
+                                addresses.push(wallet);
+                            }
+                        }
+                    }
+                    return addresses;
+                }
 
                 $('#walletTable tbody').on('click', 'button.edit-item', function () {
                     var data = walletTable.row($(this).parents('tr')).data();
@@ -456,6 +494,12 @@
                     // Change modal title back to default
                     $('.modal-title').text('Wallet Form');
                 }
+
+
+
+
+
+
             });
         </script>
 </body>

@@ -2,6 +2,7 @@ package com.tqt.airmon.controller;
 
 import com.tqt.airmon.model.Address;
 import com.tqt.airmon.model.Profile;
+import com.tqt.airmon.model.dto.ImportWalletsDTO;
 import com.tqt.airmon.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,5 +65,11 @@ public class AddressAPI {
     @GetMapping("/export")
     public ResponseEntity<?> exportPublicKeys(@RequestParam Long idProfile, @RequestParam String type) {
         return ResponseEntity.ok(service.exportListPublickey(idProfile, type));
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<?> importWallets(@RequestBody ImportWalletsDTO importWalletsDTO){
+        service.importListWallet(importWalletsDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

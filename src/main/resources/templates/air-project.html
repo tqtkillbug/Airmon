@@ -164,15 +164,36 @@
                 columns: [
                     { data: 'id' },
                     { data: 'name' },
-                    { data: 'description' },
-                    { data: 'note' },
-                    { data: 'linkSource' },
+                    {
+                        data: 'description',
+                        render: function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                return data.length > 30 ? data.substr(0, 30) + '...' : data;
+                            }
+                            return data;
+                        }
+                    },
+                    { data: 'note',
+                        render: function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                return data.length > 30 ? data.substr(0, 30) + '...' : data;
+                            }
+                            return data;
+                        }},
+                    { data: 'linkSource',
+                        render: function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                let datasub = data.length > 15 ? data.substr(0, 15) + '...' : data;
+                                return '<a href="' + data + '" target="_blank">' + datasub + '</a>';
+                            }
+                            return '<a href="' + data + '" target="_blank">' + data + '</a>';
+                        }},
                     { data: 'status' },
                     {
                         data: null,
                         render: function (data, type, row) {
-                            return '<button class="btn btn-warning edit-item" data-id="' + row.id + '" data-toggle="modal" data-target="#airProjectModal">Edit</button>' +
-                                '<button class="btn btn-danger delete-item" data-id="' + row.id + '">Delete</button>';
+                            return '<button class="btn btn-warning edit-item mr-1" data-id="' + row.id + '" data-toggle="modal" data-target="#airProjectModal"><i class="far fa-edit"></i></button>' +
+                                '<button class="btn btn-danger delete-item mr-1" data-id="' + row.id + '"><i class="fas fa-backspace"></i></button>';
                         }
                     }
                 ]
