@@ -54,7 +54,9 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Note</th>
                                             <th scope="col">Link Source</th>
+                                            <th scope="col">Source</th>
                                             <th scope="col">Status</th>
+                                            <th scope="col">Quantity</th>
                                             <th scope="col">Actions</th>
                                         </tr>
                                         </thead>
@@ -88,15 +90,15 @@
                         <form id="airProjectForm">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name:</label>
-                                <input type="text" class="form-control" id="name" required>
+                                <input type="text" class="form-control" id="name">
                             </div>
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description:</label>
-                                <input type="text" class="form-control" id="description" required>
+                                <label for="description">Description:</label>
+                                <textarea class="form-control" id="description" style="height: 100px"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="note" class="form-label">Note:</label>
-                                <input type="text" class="form-control" id="note" required>
+                                <input type="text" class="form-control" id="note" >
                             </div>
                             <div class="mb-3">
                                 <label for="linkSource" class="form-label">Link Source:</label>
@@ -104,17 +106,19 @@
                             </div>
                             <div class="mb-3">
                                 <label for="sourceSelect" class="form-label">Select Source:</label>
-                                <select class="form-select" id="sourceSelect" required>
+                                <select class="form-select custom-select-box" id="sourceSelect" required>
                                     <!-- Sources will be dynamically added here -->
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label for="statusSelect" class="form-label">Select Status:</label>
-                                <select class="form-select" id="statusSelect" required>
-                                    <option value="open">Open</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="cancel">Cancel</option>
-                                    <option value="complete">Complete</option>
+                                <select class="form-select custom-select-box" id="statusSelect" required>
+                                    <option value="NEW">New</option>
+                                    <option value="DOING">Doing</option>
+                                    <option value="PENDING">Pending</option>
+                                    <option value="CANCEL">Cancel</option>
+                                    <option value="EXPIRED">Expired</option>
+                                    <option value="CLOSE">Close</option>
                                 </select>
                             </div>
                             <input type="hidden" id="airProjectId">
@@ -189,12 +193,14 @@
                             return '<a href="' + data + '" target="_blank">' + data + '</a>';
                         }},
                     { data: 'status' },
+                    { data: 'source.name'},
+                    { data: 'process.length'},
                     {
                         data: null,
                         render: function (data, type, row) {
                             return '<button class="btn btn-warning edit-item mr-1" data-id="' + row.id + '" data-toggle="modal" data-target="#airProjectModal"><i class="far fa-edit"></i></button>' +
                                 '<button class="btn btn-danger delete-item mr-1" data-id="' + row.id + '"><i class="fas fa-backspace"></i></button>'+
-                            '<button class="btn btn-primary lauch-project mr-1" data-id="' + row.id + '"><i class="fas fa-rocket"></i></button>';
+                            '<button class="btn btn-primary lauch-project mr-1" href="' + row.id + '" data-id="' + row.id + '"><i class="fas fa-rocket"></i></button>';
                         }
                     }
                 ]
@@ -211,7 +217,9 @@
                     description: $("#description").val(),
                     note: $("#note").val(),
                     linkSource: $("#linkSource").val(),
-                    sourceId: $("#sourceSelect").val(),
+                    source:{
+                        id: $("#sourceSelect").val()
+                    },
                     status: $("#statusSelect").val()
                 };
 
@@ -221,16 +229,15 @@
                 // Send API request to add or update air project
                 $.ajax({
                     type: isUpdate ? "PUT" : "POST",
-                    url: isUpdate ? "/airproject/" + formData.id : "/airproject",
+                    url: isUpdate ? "api/air-project/" + formData.id : "api/air-project",
                     contentType: "application/json",
                     data: JSON.stringify(formData),
                     success: function () {
                         // Clear form
                         clearForm();
 
-                        // Draw DataTable to update pagination
+                        airProjectTable.ajax.reload();
                         airProjectTable.draw();
-
                         // Close the modal
                         $("#airProjectModal").modal("hide");
                     },
@@ -255,6 +262,11 @@
                 $('.modal-title').text('Edit Air Project');
             });
 
+            $('#airProjectTable tbody').on('click', 'button.lauch-project', function () {
+                var data = airProjectTable.row($(this).parents('tr')).data();
+                window.location.href = "/lauch-project/" + data.id;
+            });
+
             // Delete air project when clicking on Delete button
             $('#airProjectTable tbody').on('click', 'button.delete-item', function () {
                 var data = airProjectTable.row($(this).parents('tr')).data();
@@ -263,9 +275,10 @@
                     // Send API request to delete air project
                     $.ajax({
                         type: "DELETE",
-                        url: "/airproject/" + data.id,
+                        url: "api/air-project/" + data.id,
                         success: function () {
                             // Draw DataTable to update pagination
+                            airProjectTable.ajax.reload();
                             airProjectTable.draw();
                         },
                         error: function (error) {
@@ -287,6 +300,9 @@
                 // Change modal title back to default
                 $('.modal-title').text('Air Project Form');
             }
+            $('#airProjectModal').on('hidden.bs.modal', function () {
+                clearForm();
+            })
         });
     </script>
 </body>

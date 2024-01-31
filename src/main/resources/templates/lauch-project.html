@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/head :: head('Source Manage')"></div>
+<link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+<style>
+    .select-box-status {
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+</style>
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <div th:replace="fragments/sliderbar :: sliderbar"></div>
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <div th:replace="fragments/topbar :: topbar"></div>
+
+                <!-- Create/Edit Form -->
+                <div class="container-fluid mt-1">
+                    <div class="row">
+
+                        <div class="col-lg-6">
+
+                            <!-- Basic Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h5 class="m-0 font-weight-bold text-primary text-center" th:text="${project.name}"></h5>
+                                </div>
+                                <div class="card-body">
+                                    <input type="hidden" id="idProject" th:value="${project.id}">
+                                    <!-- Description -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold font-weight-bold">Description:</label>
+                                        <p class="form-control-static bg-light p-3 rounded" style="white-space: pre-line" th:text="${project.description}"></p>
+                                    </div>
+
+                                    <!-- Note -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold font-weight-bold">Note:</label>
+                                        <p class="form-control-static bg-light p-3 rounded" style="white-space: pre-line" th:text="${project.note}">Your project note goes here.</p>
+                                    </div>
+
+                                    <!-- Link -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold font-weight-bold">Link:</label>
+                                        <p class="form-control-static bg-light p-3 rounded"><a th:href="${project.linkSource}" th:text="${project.linkSource}"></a></p>
+                                    </div>
+
+                                    <!-- Source -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold font-weight-bold">Source:</label>
+                                        <p class="form-control-static bg-light p-3 rounded" th:text="${project.source.name}"></p>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold font-weight-bold">Status:</label>
+                                        <p class="form-control-static bg-light p-3 rounded" th:text="${project.status}"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-6">
+
+                            <!-- Dropdown Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <button class="btn btn-primary" id="addWalletProject" data-toggle="modal" data-target="#addWalletModal" ><i class="fas fa-plus-circle"></i></button>
+                                        </div>
+                                        <div class="col-2">
+                                            <button class="btn btn-success" id="addMulWalletProject" data-toggle="modal" data-target="#addMulWalletModal" ><i class="far fa-plus-square"></i></button>
+                                        </div>
+                                        <div class="col-8">
+                                            <h5 class="m-0 font-weight-bold text-success" th:text="'Process: ' +  ${project.process.size()}"></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-striped" id="airProjectTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Wallet</th>
+                                            <th scope="col">Profile</th>
+                                            <th scope="col">Info</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="airProjectList">
+<!--                                            <th:block th:each="item, iState : ${project.process}">-->
+<!--                                                <tr>-->
+<!--                                                    <td class="table-light" th:text="${item.id}"></td>-->
+<!--                                                    <td class="table-light" th:text="${item.address.accountName}"> </td>-->
+<!--                                                    <td class="table-light" th:text="${item.address.profile.name}"> </td>-->
+<!--                                                    <td class="table-light editable-info" th:text="${item.info}"> </td>-->
+<!--                                                    <td class="table-light editable-status" th:data-status="${item.status}" th:text="${item.status}"></td>-->
+<!--                                                </tr>-->
+<!--                                            </th:block>-->
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+            <!-- End of Main Content -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+    <div class="modal fade" id="addWalletModal" tabindex="-1" role="dialog" aria-labelledby="walletModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="walletModalLabel">Add Wallet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Create/Edit Wallet Form -->
+                    <form id="addWalletForm">
+                        <div class="mb-3">
+                            <label for="profileSelect" class="form-label">Select Profile:</label>
+                            <select class="form-select custom-select-box" id="profileSelect" required>
+                                <!-- Profiles will be dynamically added here -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="walletSelect" class="form-label">Select Wallet:</label>
+                            <select class="form-select custom-select-box" id="walletSelect" required>
+                                <!-- Profiles will be dynamically added here -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="infoProcess" class="form-label">Info:</label>
+                            <input type="text" class="form-control" id="infoProcess">
+                        </div>
+                        <div class="mb-3">
+                            <label for="statusProcess" class="form-label">Select Type:</label>
+                            <select class="form-select custom-select-box" id="statusProcess" required>
+                                <option value='Completed'>Completed</option>
+                                <option value='Failure'>Failure</option>
+                                <option value='In-process'>In-process</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Scroll to Top Button-->
+    <div th:replace="fragments/bottom :: bottom"></div>
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+</body>
+<script>
+    $(document).ready(function() {
+
+
+        var processTable = $('#airProjectTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            processing: true,
+            serverSide: false, // Set to true if you want server-side processing
+            ajax: {
+                url: '/api/process/list?projectId=' + $("#idProject").val(), // Replace with your API endpoint for wallets
+                type: 'GET',
+                dataSrc: ''
+            },
+            columns: [
+                { data: 'id' },
+                { data: 'address.accountName' },
+                { data: 'address.profile.name' },
+                {
+                    data: 'info',
+                    render: function (data, type, row) {
+                        return '<span class="editable-info">' + data + '</span>';
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function (data, type, row) {
+                        return '<span class="editable-status">' + data + '</span>';
+                    }
+                }
+            ]
+        });
+
+
+
+        $('#airProjectTable').on('click', '.editable-status', function(event) {
+            if($(this).find('select').length === 0) {
+                $(this).empty();  //clears out current text in the table
+                $(this).append("<select class='form-select select-box-status'>" +
+                    "<option value='Failure'>Failure</option>" +
+                    "<option value='Completed'>Completed</option>"+
+                    "<option value='In-process'>In-process</option>");
+                }
+        });
+        $('#airProjectTable').on('click', '.editable-info', function(event) {
+            if($(this).find('input').length === 0) {
+                let info = event.target.innerText;
+                $(this).empty();  //clears out current text in the table
+                $(this).append('<input type="text" class="form-control" value="'+ info+'">');
+                $(this).children("input").focus();
+            }
+        });
+        $(document).on('focusout', '.editable-status select', function(){
+            var myValue = $(this).val();
+            var $parent = $(this).parent();
+            $(this).remove();
+            $parent.append(myValue);
+            //continue call api update
+        });
+
+        $(document).on('focusout', '.editable-info input', function(){
+            var myValue = $(this).val();
+            var $parent = $(this).parent();
+            $(this).remove();
+            $parent.append(myValue);
+            //continue call api update
+        });
+
+        $.ajax({
+                type: "GET",
+                url: "/api/profile/list", // Replace with your API endpoint for profiles
+                success: function (data) {
+                    var profileSelect = $("#profileSelect");
+                    profileSelect.append(`<option value="0">Select Profile</option>`);
+                    data.forEach(function (profile) {
+                        profileSelect.append(`<option value="${profile.id}">${profile.name}</option>`);
+                    });
+                },
+                error: function (error) {
+                    console.log("Error:", error);
+                }
+            });
+
+        $('#profileSelect').on('change', function (e) {
+            var walletSelect = $("#walletSelect");
+            var idProfile = this.value;
+            if (idProfile == 0){
+                walletSelect.html("");
+                return;
+            }
+            $.ajax({
+                type: "GET",
+                url: "/api/wallet/list?profileId="+ idProfile,
+                success: function (data) {
+                    walletSelect.html("");
+                    data.forEach(function (wa) {
+                        walletSelect.append(`<option value="${wa.id}">${wa.accountName}</option>`);
+                    });
+                },
+                error: function (error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
+
+
+
+        $("#addWalletForm").submit(function (event) {
+            event.preventDefault();
+            var formData = {
+                address: {
+                    id: $("#walletSelect").val()
+                },
+                info: $("#infoProcess").val(),
+                status: $("#statusProcess").val(),
+                airProject:{
+                    id: $("#idProject").val()
+                },
+            };
+            $.ajax({
+                type: "POST",
+                url: "/api/process",
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function () {
+                    processTable.ajax.reload();
+                    processTable.draw();
+                    $("#addWalletModal").modal("hide");
+                },
+                error: function (error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
+    });
+</script>
+</html>

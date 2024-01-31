@@ -25,4 +25,24 @@ public class AirProjectService {
     public Optional<AirProject> getById(Long id){
         return repository.findById(id);
     }
+
+    public AirProject getProjectById(Long id) {
+        return repository.findById(id).get();
+    }
+
+    public void deleteById(Long id){
+        repository.deleteById(id);
+    }
+
+    public AirProject updateProject(Long id, AirProject project) {
+        AirProject existingProject = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Source not found"));
+        existingProject.setName(project.getName());
+        existingProject.setDescription(project.getDescription());
+        existingProject.setNote(project.getNote());
+        existingProject.setSource(project.getSource());
+        existingProject.setStatus(project.getStatus());
+        existingProject.setLinkSource(project.getLinkSource());
+        return repository.save(existingProject);
+    }
 }

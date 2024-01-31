@@ -2,9 +2,8 @@ package com.tqt.airmon.service;
 
 import com.tqt.airmon.model.AirProcess;
 import com.tqt.airmon.model.AirProject;
+import com.tqt.airmon.model.dto.AirProcessDTO;
 import com.tqt.airmon.repository.AirProcessRepository;
-import com.tqt.airmon.repository.AirProjectRepository;
-import com.tqt.airmon.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +32,18 @@ public class AirProcessService {
         return repository.findAll();
     }
 
+    public List<AirProcess> getListProcessByProjectId(Long id){
+        return repository.findAllByAirProjectId(id);
+    }
 
+
+    public AirProcessDTO insert(AirProcessDTO processDTO) {
+        Optional<AirProject> airProjectOptional  = projectService.getById(processDTO.getAirProject().getId());
+        airProjectOptional .ifPresent(airProject -> {
+            AirProcess airProcess = AirProcess.fromDTO(processDTO);
+            airProject.getProcess().add(airProcess);
+            projectService.insert(airProject);
+        });
+        return processDTO;
+    }
 }

@@ -1,5 +1,6 @@
 package com.tqt.airmon.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,5 +18,6 @@ public class Profile {
     private String name;
     private String backup;
     private String location;
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
 }
