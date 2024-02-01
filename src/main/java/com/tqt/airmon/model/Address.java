@@ -26,6 +26,8 @@ public class Address {
     @Column(name = "account_name")
     private String accountName;
     private String type;
+    private String chain;
+    private String note;
 
 
 }

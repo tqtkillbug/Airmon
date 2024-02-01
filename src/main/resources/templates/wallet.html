@@ -82,10 +82,11 @@
                                         <tr>
                                             <th scope="col">ID</th>
                                             <th scope="col">Public Key</th>
-                                            <th scope="col">Private Key</th>
+<!--                                            <th scope="col">Private Key</th>-->
                                             <th scope="col">Account Name</th>
                                             <th scope="col">Profile</th>
                                             <th scope="col">Type</th>
+                                            <th scope="col">Chain</th>
                                             <th scope="col">Actions</th>
                                         </tr>
                                         </thead>
@@ -140,6 +141,18 @@
                                         <option value="FILL">FILL</option>
                                         <option value="MAIN">MAIN</option>
                                     </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="chainSelect" class="form-label">Chain Type:</label>
+                                    <select class="form-select custom-select-box" id="chainSelect" required>
+                                        <option value="METAMASK">Metamask</option>
+                                        <option value="PHANTOM">Phantom</option>
+                                        <option value="OTHER">Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="note" class="form-label">Note :</label>
+                                    <input type="text" class="form-control" id="note" >
                                 </div>
                                 <input type="hidden" id="walletId">
                                 <button type="submit" class="btn btn-primary">Save</button>
@@ -283,10 +296,11 @@
                     columns: [
                         { data: 'id' },
                         { data: 'publicKey' },
-                        { data: 'privateKey' },
+                        // { data: 'privateKey' },
                         { data: 'accountName' },
                         { data: 'profile.name' }, // Assuming profile has a 'name' property
                         { data: 'type' },
+                        { data: 'chain' },
                         {
                             data: null,
                             render: function (data, type, row) {
@@ -309,7 +323,9 @@
                         profile:{
                             id: $("#profileSelect").val()
                         },
-                        type: $("#typeSelect").val()
+                        type: $("#typeSelect").val(),
+                        chain: $("#chainSelect").val(),
+                        note: $("#note").val()
                     };
                     var isUpdate = formData.id !== "";
                     $.ajax({
@@ -418,6 +434,8 @@
                     $('#accountName').val(data.accountName);
                     $('#profileSelect').val(data.profile.id);
                     $('#typeSelect').val(data.type);
+                    $('#chainSelect').val(data.chain);
+                    $('#note').val(data.note);
                     $('.modal-title').text('Edit Wallet');
                 });
                 $('#walletTable tbody').on('click', 'button.export-private-key', function () {
@@ -472,6 +490,8 @@
                     $("#accountName").val("");
                     $("#profileSelect").val("");
                     $("#typeSelect").val("");
+                    $("#note").val("");
+                    $("#chainSelect").val("");
                     // Change modal title back to default
                     $('.modal-title').text('Wallet Form');
                 }

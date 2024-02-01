@@ -60,6 +60,8 @@ public class AddressService {
              existingWallet.setPrivateKey(profileUpdate.getPrivateKey());
         }
         existingWallet.setType(profileUpdate.getType());
+        existingWallet.setChain(profileUpdate.getChain());
+        existingWallet.setNote(profileUpdate.getNote());
         return repository.save(existingWallet);
     }
 
@@ -82,6 +84,7 @@ public class AddressService {
         List<Address> addressList = importWalletsDTO.getListWallet();
         for (Address address : addressList) {
             address.setProfile(profile);
+            address.setChain("METAMASK");
             address.setType("N/A");
         }
         repository.saveAll(addressList);

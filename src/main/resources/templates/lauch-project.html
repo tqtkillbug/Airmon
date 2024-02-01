@@ -39,38 +39,29 @@
                             <!-- Basic Card Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h5 class="m-0 font-weight-bold text-primary text-center" th:text="${project.name}"></h5>
+                                    <h5 class="m-0 font-weight-bold text-primary text-center" ><span th:text="${project.name}"></span> - <span class="text-danger" th:text="${project.status}"></span></h5>
                                 </div>
                                 <div class="card-body">
                                     <input type="hidden" id="idProject" th:value="${project.id}">
-                                    <!-- Description -->
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold font-weight-bold">Description:</label>
-                                        <p class="form-control-static bg-light p-3 rounded" style="white-space: pre-line" th:text="${project.description}"></p>
-                                    </div>
-
-                                    <!-- Note -->
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold font-weight-bold">Note:</label>
-                                        <p class="form-control-static bg-light p-3 rounded" style="white-space: pre-line" th:text="${project.note}">Your project note goes here.</p>
-                                    </div>
-
                                     <!-- Link -->
                                     <div class="mb-3">
                                         <label class="form-label fw-bold font-weight-bold">Link:</label>
                                         <p class="form-control-static bg-light p-3 rounded"><a th:href="${project.linkSource}" th:text="${project.linkSource}"></a></p>
                                     </div>
-
+                                    <!-- Description -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold font-weight-bold">Description:</label>
+                                        <p class="form-control-static bg-light p-3 rounded" style="white-space: pre-line" th:text="${project.description}"></p>
+                                    </div>
+                                    <!-- Note -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold font-weight-bold">Note:</label>
+                                        <p class="form-control-static bg-light p-3 rounded" style="white-space: pre-line" th:text="${project.note}">Your project note goes here.</p>
+                                    </div>
                                     <!-- Source -->
                                     <div class="mb-3">
                                         <label class="form-label fw-bold font-weight-bold">Source:</label>
                                         <p class="form-control-static bg-light p-3 rounded" th:text="${project.source.name}"></p>
-                                    </div>
-
-                                    <!-- Status -->
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold font-weight-bold">Status:</label>
-                                        <p class="form-control-static bg-light p-3 rounded" th:text="${project.status}"></p>
                                     </div>
                                 </div>
                             </div>
@@ -186,7 +177,8 @@
 </body>
 <script>
     $(document).ready(function() {
-
+        var oldStatus = "";
+        var oldInfo = "";
 
         var processTable = $('#airProjectTable').DataTable({
             paging: true,
@@ -222,6 +214,7 @@
 
         $('#airProjectTable').on('click', '.editable-status', function(event) {
             if($(this).find('select').length === 0) {
+                console.log($(this).text());
                 $(this).empty();  //clears out current text in the table
                 $(this).append("<select class='form-select select-box-status'>" +
                     "<option value='Failure'>Failure</option>" +
@@ -238,18 +231,31 @@
             }
         });
         $(document).on('focusout', '.editable-status select', function(){
-            var myValue = $(this).val();
+            var newStatus = $(this).val();
             var $parent = $(this).parent();
-            $(this).remove();
-            $parent.append(myValue);
-            //continue call api update
+            if (oldStatus !== newStatus){
+                $(this).remove();
+                $parent.append(newStatus);
+                var data = processTable.row($parent.parents('tr')).data();
+                var form = {
+                    status: newStatus
+                }
+                updateProcess(form,data.id)
+            }
         });
 
         $(document).on('focusout', '.editable-info input', function(){
-            var myValue = $(this).val();
+            var newInfo = $(this).val();
             var $parent = $(this).parent();
-            $(this).remove();
-            $parent.append(myValue);
+            if (oldInfo !== newInfo){
+                $(this).remove();
+                $parent.append(newInfo);
+                var data = processTable.row($parent.parents('tr')).data();
+                var form = {
+                    info: newInfo
+                }
+                updateProcess(form,data.id)
+            }
             //continue call api update
         });
 
@@ -319,6 +325,25 @@
                 }
             });
         });
+        
+        
+        
+        function updateProcess(process,id) {
+            $.ajax({
+                type: "PUT",
+                url: "/api/process/"+ id,
+                contentType: "application/json",
+                data: JSON.stringify(process),
+                success: function () {
+                    processTable.ajax.reload();
+                    processTable.draw();
+                    $("#addWalletModal").modal("hide");
+                },
+                error: function (error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
     });
 </script>
 </html>

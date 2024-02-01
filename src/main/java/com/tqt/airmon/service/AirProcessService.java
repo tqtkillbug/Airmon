@@ -1,5 +1,6 @@
 package com.tqt.airmon.service;
 
+import com.tqt.airmon.model.Address;
 import com.tqt.airmon.model.AirProcess;
 import com.tqt.airmon.model.AirProject;
 import com.tqt.airmon.model.dto.AirProcessDTO;
@@ -45,5 +46,17 @@ public class AirProcessService {
             projectService.insert(airProject);
         });
         return processDTO;
+    }
+
+    public AirProcess updateProcess(Long id, AirProcess processUpdate) {
+        AirProcess existingProcess = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Source not found"));
+        if (processUpdate.getInfo() != null){
+            existingProcess.setInfo(processUpdate.getInfo());
+        }
+        if (processUpdate.getStatus() != null){
+            existingProcess.setStatus(processUpdate.getStatus());
+        }
+        return repository.save(existingProcess);
     }
 }

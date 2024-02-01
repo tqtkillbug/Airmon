@@ -1,13 +1,16 @@
 package com.tqt.airmon.controller;
 
 import com.tqt.airmon.model.AirProcess;
+import com.tqt.airmon.model.AirProject;
 import com.tqt.airmon.model.dto.AirProcessDTO;
 import com.tqt.airmon.service.AirProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,4 +42,11 @@ public class AirProcessController {
         }
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProcess(@PathVariable Long id, @RequestBody AirProcess process) {
+        AirProcess airProcess = service.updateProcess(id, process);
+        return ResponseEntity.ok(airProcess);
+    }
+
 }

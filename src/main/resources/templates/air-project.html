@@ -32,9 +32,32 @@
                                 </div>
                                 <div class="card-body">
                                     <!-- Open Modal Button for Adding New Air Project -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#airProjectModal">
-                                        Add New Air Project
-                                    </button>
+
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#airProjectModal">
+                                            Add New Air Project
+                                        </button>
+                                        </div>
+                                        <div class="col-3"></div>
+                                        <div class="col-3">
+                                            <label for="columnSelector" class="form-label">Select Status:</label>
+                                            <select class="form-select custom-select-box" id="columnSelector" multiple>
+                                                <option value="0">ID</option>
+                                                <option value="1">Name</option>
+                                                <option value="2">Description</option>
+                                                <option value="3">Note</option>
+                                                <option value="4">Link Source</option>
+                                                <option value="5">Status</option>
+                                                <option value="6">Source</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-3">
+                                            <label for="searchInput">Search:</label>
+                                            <input type="text" id="searchInput">
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -54,8 +77,8 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Note</th>
                                             <th scope="col">Link Source</th>
-                                            <th scope="col">Source</th>
                                             <th scope="col">Status</th>
+                                            <th scope="col">Source</th>
                                             <th scope="col">Quantity</th>
                                             <th scope="col">Actions</th>
                                         </tr>
@@ -114,6 +137,7 @@
                                 <label for="statusSelect" class="form-label">Select Status:</label>
                                 <select class="form-select custom-select-box" id="statusSelect" required>
                                     <option value="NEW">New</option>
+                                    <option value="UPDATE">Update</option>
                                     <option value="DOING">Doing</option>
                                     <option value="PENDING">Pending</option>
                                     <option value="CANCEL">Cancel</option>
@@ -167,7 +191,7 @@
                 },
                 columns: [
                     { data: 'id' },
-                    { data: 'name' },
+                    { data: 'name',className: "font-weight-bold text-primary" },
                     {
                         data: 'description',
                         render: function (data, type, row) {
@@ -180,7 +204,7 @@
                     { data: 'note',
                         render: function (data, type, row) {
                             if (type === 'display' || type === 'filter') {
-                                return data.length > 30 ? data.substr(0, 30) + '...' : data;
+                                return data.length > 20 ? data.substr(0, 20) + '...' : data;
                             }
                             return data;
                         }},
@@ -192,18 +216,38 @@
                             }
                             return '<a href="' + data + '" target="_blank">' + data + '</a>';
                         }},
-                    { data: 'status' },
-                    { data: 'source.name'},
-                    { data: 'process.length'},
+                    { data: 'status',className: "font-weight-bold text-success" },
+                    { data: 'source.name',className: "font-weight-bold "},
+                    { data: 'process.length' ,className: "text-center fs-4"},
                     {
                         data: null,
                         render: function (data, type, row) {
                             return '<button class="btn btn-warning edit-item mr-1" data-id="' + row.id + '" data-toggle="modal" data-target="#airProjectModal"><i class="far fa-edit"></i></button>' +
                                 '<button class="btn btn-danger delete-item mr-1" data-id="' + row.id + '"><i class="fas fa-backspace"></i></button>'+
-                            '<button class="btn btn-primary lauch-project mr-1" href="' + row.id + '" data-id="' + row.id + '"><i class="fas fa-rocket"></i></button>';
+                            '<button class="btn btn-primary lauch-project mr-1"  data-id="' + row.id + '"><i class="fas fa-rocket"></i></button>';
                         }
                     }
                 ]
+            });
+
+
+            $('#columnSelector').on('change', function() {
+                var selectedColumns = $(this).val();
+                console.log(selectedColumns);
+                airProjectTable.columns().search('').draw();
+
+                $.each(selectedColumns, function(index, columnIndex) {
+                    airProjectTable.columns(columnIndex).search($('#searchInput').val()).draw();
+                });
+            });
+
+            $('#searchInput').on('keyup', function() {
+                var selectedColumns = $('#columnSelector').val();
+                airProjectTable.columns().search('').draw();
+
+                $.each(selectedColumns, function(index, columnIndex) {
+                    airProjectTable.columns(columnIndex).search($('#searchInput').val()).draw();
+                });
             });
 
             // Submit form to add or update air project
@@ -264,7 +308,7 @@
 
             $('#airProjectTable tbody').on('click', 'button.lauch-project', function () {
                 var data = airProjectTable.row($(this).parents('tr')).data();
-                window.location.href = "/lauch-project/" + data.id;
+                window.open("/lauch-project/" + data.id, '_blank');
             });
 
             // Delete air project when clicking on Delete button
