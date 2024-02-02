@@ -39,10 +39,11 @@
                                             Add New Air Project
                                         </button>
                                         </div>
-                                        <div class="col-3"></div>
                                         <div class="col-3">
-                                            <label for="columnSelector" class="form-label">Select Status:</label>
-                                            <select class="form-select custom-select-box" id="columnSelector" multiple>
+
+                                        </div>
+                                        <div class="col-4">
+                                            <select class="form-select form-control custom-select-box" id="columnSelector" name="states[]" multiple="multiple">
                                                 <option value="0">ID</option>
                                                 <option value="1">Name</option>
                                                 <option value="2">Description</option>
@@ -52,9 +53,8 @@
                                                 <option value="6">Source</option>
                                             </select>
                                         </div>
-                                        <div class="col-3">
-                                            <label for="searchInput">Search:</label>
-                                            <input type="text" id="searchInput">
+                                        <div class="col-2">
+                                            <input class="form-control"  type="text" id="searchInput">
                                         </div>
                                     </div>
 
@@ -162,6 +162,7 @@
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
         $(document).ready(function () {
+            $('#columnSelector').select2();
             // Populate source options in the select box from API
             $.ajax({
                 type: "GET",
