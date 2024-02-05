@@ -186,7 +186,8 @@
 </body>
 <script>
     $(document).ready(function() {
-
+        var oldStatus = "";
+        var oldInfo = "";
 
         var processTable = $('#airProjectTable').DataTable({
             paging: true,
@@ -222,6 +223,7 @@
 
         $('#airProjectTable').on('click', '.editable-status', function(event) {
             if($(this).find('select').length === 0) {
+                oldStatus = event.target.innerText;
                 $(this).empty();  //clears out current text in the table
                 $(this).append("<select class='form-select select-box-status'>" +
                     "<option value='Failure'>Failure</option>" +
@@ -232,25 +234,44 @@
         $('#airProjectTable').on('click', '.editable-info', function(event) {
             if($(this).find('input').length === 0) {
                 let info = event.target.innerText;
+                oldStatus = info;
                 $(this).empty();  //clears out current text in the table
                 $(this).append('<input type="text" class="form-control" value="'+ info+'">');
                 $(this).children("input").focus();
             }
         });
         $(document).on('focusout', '.editable-status select', function(){
-            var myValu  e = $(this).val();
+            var newStatus = $(this).val();
+            var myValue = $(this).val();
             var $parent = $(this).parent();
+            if (oldStatus !== newStatus){
+                $(this).remove();
+                $parent.append(newStatus);
+                var data = processTable.row($parent.parents('tr')).data();
+                var form = {
+                    status: newStatus
+                }
+                updateProcess(form,data.id)
+            }
             $(this).remove();
             $parent.append(myValue);
-            //continue call api update
         });
 
         $(document).on('focusout', '.editable-info input', function(){
+            var newInfo = $(this).val();
             var myValue = $(this).val();
             var $parent = $(this).parent();
+            if (oldInfo !== newInfo){
+                $(this).remove();
+                $parent.append(newInfo);
+                var data = processTable.row($parent.parents('tr')).data();
+                var form = {
+                    info: newInfo
+                }
+                updateProcess(form,data.id)
+            }
             $(this).remove();
             $parent.append(myValue);
-            //continue call api update
         });
 
         $.ajax({
@@ -319,6 +340,24 @@
                 }
             });
         });
+
+    function updateProcess(process,id) {
+        $.ajax({
+            type: "PUT",
+            url: "/api/process/"+ id,
+            contentType: "application/json",
+            data: JSON.stringify(process),
+            success: function () {
+                processTable.ajax.reload();
+                processTable.draw();
+                $("#addWalletModal").modal("hide");
+            },
+            error: function (error) {
+                console.log("Error:", error);
+            }
+        });
+    }
+
     });
 </script>
 </html>
