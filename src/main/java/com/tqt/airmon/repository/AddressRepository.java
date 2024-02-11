@@ -14,4 +14,6 @@ public interface AddressRepository extends JpaRepository<Address,Long> {
     List<Address> findAllByProfileIdAndType(Long id,String type);
 
     List<Address> findAllByType(String type);
+
+    Address findByPublicKey(String publicKey);
 }

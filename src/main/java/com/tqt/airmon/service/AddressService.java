@@ -23,7 +23,12 @@ public class AddressService {
     private ProfileService profileService;
 
     public Address insert(Address address){
-        return repository.save(address);
+        Address existingWallet = repository.findByPublicKey(address.getPublicKey());
+        if (existingWallet == null){
+            return repository.save(address);
+        } else{
+            return null;
+        }
     }
 
     public List<Address> getAll(){
