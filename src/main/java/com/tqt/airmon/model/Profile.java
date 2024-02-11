@@ -14,7 +14,7 @@ import lombok.Data;
 public class Profile {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String name;
     private String backup;
     private String location;
