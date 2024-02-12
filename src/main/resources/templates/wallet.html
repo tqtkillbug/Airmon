@@ -340,6 +340,7 @@
                             $("#walletModal").modal("hide");
                         },
                         error: function (error) {
+                            alert(error)
                             console.log("Error:", error);
                         }
                     });
@@ -362,6 +363,7 @@
                           $("#showExportModal").modal("show");
                         },
                         error: function (error) {
+                            alert(error)
                             console.log("Error:", error);
                         }
                     });
@@ -384,10 +386,11 @@
                         contentType: "application/json",
                         data: JSON.stringify(importData),
                         success: function (data) {
-
+                            $("#importModal").modal("hide");
                         },
                         error: function (error) {
                             console.log("Error:", error);
+                            alert(error)
                         }
                     });
                 });

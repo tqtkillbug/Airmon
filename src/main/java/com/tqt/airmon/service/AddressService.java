@@ -10,6 +10,7 @@ import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -87,11 +88,18 @@ public class AddressService {
     public void importListWallet(ImportWalletsDTO importWalletsDTO) {
         Profile profile = profileService.getById(importWalletsDTO.getIdProfile());
         List<Address> addressList = importWalletsDTO.getListWallet();
+        List<Address> listWalletExisting = getListAddressByProfileId(profile.getId());
+        Map<String,String> mapExisting = listWalletExisting.stream().collect(Collectors.toMap(Address::getPublicKey,Address::getPublicKey));
+        List<Address> listSave = new ArrayList<>();
         for (Address address : addressList) {
+            if (mapExisting.containsKey(address.getPublicKey())){
+                continue;
+            }
             address.setProfile(profile);
             address.setChain("METAMASK");
             address.setType("N/A");
+            listSave.add(address);
         }
-        repository.saveAll(addressList);
+        repository.saveAll(listSave);
     }
 }
