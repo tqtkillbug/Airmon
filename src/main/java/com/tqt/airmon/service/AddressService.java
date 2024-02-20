@@ -1,5 +1,6 @@
 package com.tqt.airmon.service;
 
+import com.tqt.airmon.exception.ExistResourceException;
 import com.tqt.airmon.model.Address;
 import com.tqt.airmon.model.Profile;
 import com.tqt.airmon.model.dto.ImportWalletsDTO;
@@ -25,11 +26,10 @@ public class AddressService {
 
     public Address insert(Address address){
         Address existingWallet = repository.findByPublicKey(address.getPublicKey());
-        if (existingWallet == null){
-            return repository.save(address);
-        } else{
-            return null;
+        if (existingWallet != null){
+            throw new ExistResourceException("Address Wallet Existing!");
         }
+        return repository.save(address);
     }
 
     public List<Address> getAll(){
