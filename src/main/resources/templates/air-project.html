@@ -174,7 +174,7 @@
                     });
                 },
                 error: function (error) {
-                    console.log("Error:", error);
+                    Common.showToastError(error.responseText);
                 }
             });
 
@@ -285,9 +285,14 @@
                         airProjectTable.draw();
                         // Close the modal
                         $("#airProjectModal").modal("hide");
+                        if (isUpdate){
+                            Common.showToastSuccess("Update Success!")
+                        } else{
+                            Common.showToastSuccess("Insert Success!")
+                        }
                     },
                     error: function (error) {
-                        console.log("Error:", error);
+                        Common.showToastError(error.responseText);
                     }
                 });
             });
@@ -327,7 +332,7 @@
                             airProjectTable.draw();
                         },
                         error: function (error) {
-                            console.log("Error:", error);
+                            Common.showToastError(error.responseText);
                         }
                     });
                 }

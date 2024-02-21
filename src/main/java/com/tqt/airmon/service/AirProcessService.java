@@ -1,5 +1,6 @@
 package com.tqt.airmon.service;
 
+import com.tqt.airmon.exception.ExistResourceException;
 import com.tqt.airmon.model.Address;
 import com.tqt.airmon.model.AirProcess;
 import com.tqt.airmon.model.AirProject;
@@ -47,6 +48,8 @@ public class AirProcessService {
             if (processExisting.isEmpty()){
                 airProject.getProcess().add(airProcess);
                 projectService.insert(airProject);
+            }else {
+                throw new ExistResourceException("This wallet added to project");
             }
         });
         return processDTO;

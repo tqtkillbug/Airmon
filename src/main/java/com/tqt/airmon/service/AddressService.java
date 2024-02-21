@@ -7,7 +7,6 @@ import com.tqt.airmon.model.dto.ImportWalletsDTO;
 import com.tqt.airmon.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +84,7 @@ public class AddressService {
       return list.stream().map(Address::getPublicKey).collect(Collectors.toList());
     }
 
-    public void importListWallet(ImportWalletsDTO importWalletsDTO) {
+    public int importListWallet(ImportWalletsDTO importWalletsDTO) {
         Profile profile = profileService.getById(importWalletsDTO.getIdProfile());
         List<Address> addressList = importWalletsDTO.getListWallet();
         List<Address> listWalletExisting = getListAddressByProfileId(profile.getId());
@@ -101,5 +100,6 @@ public class AddressService {
             listSave.add(address);
         }
         repository.saveAll(listSave);
+        return listSave.size();
     }
 }

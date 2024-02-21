@@ -69,7 +69,6 @@ public class AddressAPI {
 
     @PostMapping("/import")
     public ResponseEntity<?> importWallets(@RequestBody ImportWalletsDTO importWalletsDTO){
-        service.importListWallet(importWalletsDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(service.importListWallet(importWalletsDTO), HttpStatus.CREATED);
     }
 }

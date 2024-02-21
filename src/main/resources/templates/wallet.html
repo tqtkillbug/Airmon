@@ -277,7 +277,7 @@
                         });
                     },
                     error: function (error) {
-                        console.log("Error:", error);
+                        Common.showToastError(error.responseText);
                     }
                 });
 
@@ -338,10 +338,10 @@
                             walletTable.ajax.reload();
                             walletTable.draw();
                             $("#walletModal").modal("hide");
+                            Common.showToastSuccess("Add New Wallet Success")
                         },
                         error: function (error) {
-                            alert(error)
-                            console.log("Error:", error);
+                            Common.showToastError(error.responseText)
                         }
                     });
                 });
@@ -363,8 +363,7 @@
                           $("#showExportModal").modal("show");
                         },
                         error: function (error) {
-                            alert(error)
-                            console.log("Error:", error);
+                            Common.showToastError(error.responseText);
                         }
                     });
                 })
@@ -387,10 +386,10 @@
                         data: JSON.stringify(importData),
                         success: function (data) {
                             $("#importModal").modal("hide");
+                            Common.showToastSuccess(`Import success ${data} wallets`)
                         },
                         error: function (error) {
-                            console.log("Error:", error);
-                            alert(error)
+                            Common.showToastError(error.responseText)
                         }
                     });
                 });
@@ -447,11 +446,13 @@
                         type: "GET",
                         url: "api/wallet/" + data.id,
                         success: function (response) {
-                            $("#privateKeyModal").val(response.privateKey);
-                            $("#privateKeyExportModal").modal().show();
+                            if (response.privateKey == null || response.privateKey.trim() === ""){
+                             Common.showToastError("Wallet Non Set Private Key"); return;
+                            }
+                            Common.showToastCopyData(response.privateKey)
                         },
                         error: function (error) {
-                            console.log("Error:", error);
+                            Common.showToastError(error.responseText)
                         }
                     });
                 });
@@ -472,12 +473,12 @@
                             type: "DELETE",
                             url: "api/wallet/" + data.id,
                             success: function () {
-                                // Draw DataTable to update pagination
+                               Common.showToastSuccess("Delete Wallet Success!")
                                 walletTable.ajax.reload();
                                 walletTable.draw();
                             },
                             error: function (error) {
-                                console.log("Error:", error);
+                                Common.showToastError(error.responseText)
                             }
                         });
                     }

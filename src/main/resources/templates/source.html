@@ -146,9 +146,14 @@
                         clearForm();
                         dataTable.ajax.reload();
                         dataTable.draw();
+                        if (itemId){
+                            Common.showToastSuccess("Update Source Success!")
+                        }else {
+                            Common.showToastSuccess("Insert New Source Success!")
+                        }
                     },
                     error: function (error) {
-                        console.log("Error:", error);
+                        Common.showToastError(error.responseText);
                     },
                     complete: function () {
 
@@ -167,9 +172,10 @@
                     success: function () {
                         // Reload DataTable
                         dataTable.ajax.reload();
+                        Common.showToastSuccess("Deleted Source!")
                     },
                     error: function (error) {
-                        console.log("Error:", error);
+                        Common.showToastError(error.responseText);
                     }
                 });
             });
@@ -189,7 +195,7 @@
                         $("#itemId").val(item.id);
                     },
                     error: function (error) {
-                        console.log("Error:", error);
+                        Common.showToastError(error.responseText);
                     }
                 });
             });

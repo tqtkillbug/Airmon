@@ -285,7 +285,7 @@
                     });
                 },
                 error: function (error) {
-                    console.log("Error:", error);
+                    Common.showToastError(error.responseText)
                 }
             });
 
@@ -306,7 +306,7 @@
                     });
                 },
                 error: function (error) {
-                    console.log("Error:", error);
+                    Common.showToastError(error.responseText);
                 }
             });
         });
@@ -334,9 +334,10 @@
                     processTable.ajax.reload();
                     processTable.draw();
                     $("#addWalletModal").modal("hide");
+                    Common.showToastSuccess("Add Wallet To Project Success")
                 },
                 error: function (error) {
-                    console.log("Error:", error);
+                    Common.showToastError(error.responseText)
                 }
             });
         });
@@ -351,9 +352,10 @@
                 processTable.ajax.reload();
                 processTable.draw();
                 $("#addWalletModal").modal("hide");
+                Common.showToastSuccess("Update process Success")
             },
             error: function (error) {
-                console.log("Error:", error);
+                Common.showToastError(error.responseText)
             }
         });
     }

@@ -183,9 +183,14 @@
                         profileTable.ajax.reload();
                         profileTable.draw();
                         $("#profileModal").modal("hide");
+                        if (isUpdate){
+                            Common.showToastSuccess("Update Profile Success!")
+                        }else {
+                            Common.showToastSuccess("Insert Profile success!")
+                        }
                     },
                     error: function (error) {
-                        console.log("Error:", error);
+                        Common.showToastError(error.responseText);
                     }
                 });
             });
@@ -202,10 +207,11 @@
                         success: function () {
                             // Draw DataTable to update pagination
                             profileTable.ajax.reload();
-                            profileTable.draw();
+                            profileTable.draw()
+                            Common.showToastSuccess("Deleted Profile")
                         },
                         error: function (error) {
-                            console.log("Error:", error);
+                            Common.showToastError(error.responseText);
                         }
                     });
                 }
