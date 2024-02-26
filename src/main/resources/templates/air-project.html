@@ -184,7 +184,8 @@
                 searching: true,
                 ordering: true,
                 processing: true,
-                serverSide: false, // Set to true if you want server-side processing
+                serverSide: false,
+                pageLength: 20,
                 ajax: {
                     url: 'api/air-project/list', // Replace with your API endpoint for air projects
                     type: 'GET',
@@ -229,6 +230,21 @@
                         }
                     }
                 ]
+            });
+            var select = $('<select><option value=""></option></select>')
+                .appendTo('#airProjectTable')
+                .on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex(
+                        $(this).val()
+                    );
+
+                    // Tìm kiếm theo cột cụ thể (ví dụ: cột 2)
+                    airProjectTable.column(5).search(val ? '^' + val + '$' : '', true, false).draw();
+                });
+
+            // Lấy dữ liệu từ cột và thêm vào select box
+            airProjectTable.column(5).data().unique().sort().each(function (d, j) {
+                console.log(d)
             });
 
 
@@ -353,7 +369,38 @@
             $('#airProjectModal').on('hidden.bs.modal', function () {
                 clearForm();
             })
+            airProjectTable.on( 'draw', function () {
+                triggerAction();
+            });
+            function triggerAction() {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const editProjectId = urlParams.get('editProject')
+                if (editProjectId){
+                    var button = $(`button.btn.edit-item[data-id="${editProjectId}"]`);
+                    if (button.length > 0){
+                        $("#airProjectModal").modal('show');
+                        var data = airProjectTable.row(button.parents('tr')).data();
+                        // Populate the form fields with air project data
+                        $('#airProjectId').val(data.id);
+                        $('#name').val(data.name);
+                        $('#description').val(data.description);
+                        $('#note').val(data.note);
+                        $('#linkSource').val(data.linkSource);
+                        $('#sourceSelect').val(data.source.id);
+                        $('#statusSelect').val(data.status);
+                        // Change modal title
+                        $('.modal-title').text('Edit Air Project');
+
+                    }
+                }else {
+                    console.log("HIHIHIHIH");
+                }
+
+            }
         });
+
+
     </script>
 </body>
 

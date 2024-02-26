@@ -39,7 +39,14 @@
                             <!-- Basic Card Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h5 class="m-0 font-weight-bold text-primary text-center" th:text="${project.name}"></h5>
+                                    <div class="row">
+                                        <div class="col-11">
+                                            <h5 class="m-0 font-weight-bold text-primary text-center" ><span th:text="${project.name}"></span> - <span class="text-danger" th:text="${project.status}"></span> </h5>
+                                        </div>
+                                        <div class="col-1">
+                                            <a class="btn btn-warning" th:href="@{'/air-project?editProject=' + ${project.id}}"><i class="fas fa-edit"></i></a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <input type="hidden" id="idProject" th:value="${project.id}">
@@ -263,7 +270,7 @@
             var $parent = $(this).parent();
             if (oldInfo !== newInfo){
                 $(this).remove();
-                $parent.append(newInfo);
+                $parent.html(newInfo);
                 var data = processTable.row($parent.parents('tr')).data();
                 var form = {
                     info: newInfo
@@ -359,6 +366,7 @@
             }
         });
     }
+
 
     });
 </script>
