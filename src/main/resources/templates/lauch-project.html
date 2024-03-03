@@ -185,6 +185,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="processDetailModal" tabindex="-1" aria-labelledby="processDetailModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formProcessDetail">
+                        <div class="mb-3">
+                            <span id="infoProcessModal" class="editable-info">
+
+                            </span>
+                        </div>
+                    </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scroll to Top Button-->
     <div th:replace="fragments/bottom :: bottom"></div>
     <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
@@ -211,12 +235,14 @@
                 { data: 'id' },
                 { data: 'address.accountName' },
                 { data: 'address.profile.name' },
-                {
-                    data: 'info',
+                { data: 'info',
                     render: function (data, type, row) {
-                        return '<span class="editable-info">' + data + '</span>';
-                    }
-                },
+                        if (type === 'display' || type === 'filter') {
+                            data = data.length > 50 ? data.substr(0, 50) + '...' : data;
+                            return '<span class="show-info-process" >' + data + '</span>';
+                        }
+                        return data;
+                    }},
                 {
                     data: 'status',
                     render: function (data, type, row) {
@@ -238,14 +264,19 @@
                     "<option value='In-process'>In-process</option>");
                 }
         });
-        $('#airProjectTable').on('click', '.editable-info', function(event) {
-            if($(this).find('input').length === 0) {
+        $('#formProcessDetail').on('click', '.editable-info', function(event) {
+            if($(this).find('textarea').length === 0) {
                 let info = event.target.innerText;
                 oldStatus = info;
-                $(this).empty();  //clears out current text in the table
-                $(this).append('<input type="text" class="form-control" value="'+ info+'">');
-                $(this).children("input").focus();
+                $(this).empty();
+                $(this).append('<textarea class="form-control" rows="5" >' + info +'</textarea>');
+                $(this).children("textarea").focus();
             }
+        });
+        $('#airProjectTable').on('click', '.show-info-process', function(event) {
+            $('#processDetailModal').modal("show");
+            var data = processTable.row($(this).parents('tr')).data();
+            $('#infoProcessModal').text(data.info);
         });
         $(document).on('focusout', '.editable-status select', function(){
             var newStatus = $(this).val();
@@ -265,20 +296,20 @@
         });
 
         $(document).on('focusout', '.editable-info input', function(){
-            var newInfo = $(this).val();
-            var myValue = $(this).val();
-            var $parent = $(this).parent();
-            if (oldInfo !== newInfo){
-                $(this).remove();
-                $parent.html(newInfo);
-                var data = processTable.row($parent.parents('tr')).data();
-                var form = {
-                    info: newInfo
-                }
-                updateProcess(form,data.id)
-            }
-            $(this).remove();
-            $parent.append(myValue);
+            // var newInfo = $(this).val();
+            // var myValue = $(this).val();
+            // var $parent = $(this).parent();
+            // if (oldInfo !== newInfo){
+            //     $(this).remove();
+            //     $parent.html(newInfo);
+            //     var data = processTable.row($parent.parents('tr')).data();
+            //     var form = {
+            //         info: newInfo
+            //     }
+            //     updateProcess(form,data.id)
+            // }
+            // $(this).remove();
+            // $parent.append(myValue);
         });
 
         $.ajax({
