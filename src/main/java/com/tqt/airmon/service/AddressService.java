@@ -70,7 +70,7 @@ public class AddressService {
         return repository.save(existingWallet);
     }
 
-    public List<String> exportListPublickey(Long profileId, String type){
+    public List<String> exportListPublickey(Long profileId, String type, String chain){
       List<Address> list;
       if (profileId != 0 && !type.isEmpty()){
           list = repository.findAllByProfileIdAndType(profileId,type);
@@ -80,6 +80,9 @@ public class AddressService {
           list = repository.findAllByType(type);
       } else {
           list = repository.findAll();
+      }
+      if (!chain.isEmpty()){
+          list = list.stream().filter(w -> w.getChain().equals(chain)).collect(Collectors.toList());
       }
       return list.stream().map(Address::getPublicKey).collect(Collectors.toList());
     }

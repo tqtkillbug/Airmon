@@ -182,11 +182,20 @@
                             </div>
                             <div class="mb-3">
                                 <label for="typeSelect" class="form-label">Select Type:</label>
-                                <select class="form-select custom-select-box" id="typeExportSelect" required>
-                                    <option value=" ">ALL</option>
+                                <select class="form-select custom-select-box" id="typeExportSelect">
+                                    <option value="">ALL</option>
                                     <option value="CN">CN</option>
                                     <option value="FILL">FILL</option>
                                     <option value="MAIN">MAIN</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="chainExportSelect" class="form-label">Select Chain:</label>
+                                <select class="form-select custom-select-box" id="chainExportSelect" >
+                                    <option value="">ALL</option>
+                                    <option value="METAMASK">METAMASK</option>
+                                    <option value="PHANTOM">PHANTOM</option>
+                                    <option value="OTHER">OTHER</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary">Export</button>
@@ -212,7 +221,7 @@
             </div>
     </div>
         <div class="modal fade" id="showExportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog ">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">List Wallet Address</h5>
@@ -295,7 +304,7 @@
                     },
                     columns: [
                         { data: 'id' },
-                        { data: 'publicKey' },
+                        { data: 'publicKey',className: "user-select-all"},
                         // { data: 'privateKey' },
                         { data: 'accountName' },
                         { data: 'profile.name' }, // Assuming profile has a 'name' property
@@ -350,10 +359,11 @@
                     event.preventDefault();
                        let idProfile = $("#profileExportSelect").val();
                        let type = $("#typeExportSelect").val();
+                        let chain = $("#chainExportSelect").val();
                     $("#listWalletAddr").html("");
                     $.ajax({
                         type: "GET",
-                        url: "api/wallet/export?idProfile=" + idProfile+ "&type=" + type,
+                        url: "api/wallet/export?idProfile=" + idProfile+ "&type=" + type+"&chain=" + chain,
                         success: function (data) {
                             for (let wa of data) {
                                 $("#listWalletAddr").append(wa);

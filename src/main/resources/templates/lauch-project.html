@@ -192,19 +192,31 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <form id="formProcessDetail">
                         <div class="mb-3">
-                            <span id="infoProcessModal" class="editable-info">
+                            <label for="walletProcessModal" class="form-label fw-bold font-weight-bold">Wallet:</label>
+                            <p id="walletProcessModal" class="form-control-static bg-light p-2"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileProcessModal" class="form-label fw-bold font-weight-bold">Profile:</label>
+                            <p id="profileProcessModal" class="form-control-static bg-light p-2"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="infoProcessModal" class="form-label fw-bold font-weight-bold">Info:</label>
+                            <p id="infoProcessModal" class="form-control-static bg-light p-2 editable-info" >
 
-                            </span>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" id="idProcessModal">
+                            <button type="submit" class="btn btn-warning">Save</button>
                         </div>
                     </form>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
             </div>
         </div>
     </div>
@@ -235,16 +247,16 @@
                 { data: 'id' },
                 { data: 'address.accountName' },
                 { data: 'address.profile.name' },
-                { data: 'info',
+                { data: 'info', className : "pointer",
                     render: function (data, type, row) {
                         if (type === 'display' || type === 'filter') {
-                            data = data.length > 50 ? data.substr(0, 50) + '...' : data;
+                            data = data.length > 30 ? data.substr(0, 30) + '...' : data;
                             return '<span class="show-info-process" >' + data + '</span>';
                         }
                         return data;
                     }},
                 {
-                    data: 'status',
+                    data: 'status', className: "pointer",
                     render: function (data, type, row) {
                         return '<span class="editable-status">' + data + '</span>';
                     }
@@ -257,34 +269,23 @@
         $('#airProjectTable').on('click', '.editable-status', function(event) {
             if($(this).find('select').length === 0) {
                 oldStatus = event.target.innerText;
-                $(this).empty();  //clears out current text in the table
+                $(this).empty();
                 $(this).append("<select class='form-select select-box-status'>" +
                     "<option value='Failure'>Failure</option>" +
                     "<option value='Completed'>Completed</option>"+
                     "<option value='In-process'>In-process</option>");
                 }
         });
-        $('#formProcessDetail').on('click', '.editable-info', function(event) {
-            if($(this).find('textarea').length === 0) {
-                let info = event.target.innerText;
-                oldStatus = info;
-                $(this).empty();
-                $(this).append('<textarea class="form-control" rows="5" >' + info +'</textarea>');
-                $(this).children("textarea").focus();
-            }
-        });
-        $('#airProjectTable').on('click', '.show-info-process', function(event) {
-            $('#processDetailModal').modal("show");
-            var data = processTable.row($(this).parents('tr')).data();
-            $('#infoProcessModal').text(data.info);
-        });
+
         $(document).on('focusout', '.editable-status select', function(){
             var newStatus = $(this).val();
             var myValue = $(this).val();
             var $parent = $(this).parent();
+            console.log(newStatus)
+            console.log(myValue)
+            console.log($parent)
             if (oldStatus !== newStatus){
                 $(this).remove();
-                $parent.append(newStatus);
                 var data = processTable.row($parent.parents('tr')).data();
                 var form = {
                     status: newStatus
@@ -295,21 +296,33 @@
             $parent.append(myValue);
         });
 
-        $(document).on('focusout', '.editable-info input', function(){
-            // var newInfo = $(this).val();
-            // var myValue = $(this).val();
-            // var $parent = $(this).parent();
-            // if (oldInfo !== newInfo){
-            //     $(this).remove();
-            //     $parent.html(newInfo);
-            //     var data = processTable.row($parent.parents('tr')).data();
-            //     var form = {
-            //         info: newInfo
-            //     }
-            //     updateProcess(form,data.id)
-            // }
-            // $(this).remove();
-            // $parent.append(myValue);
+        $('#formProcessDetail').on('click', '.editable-info', function(event) {
+            if($(this).find('textarea').length === 0) {
+                let info = event.target.innerText;
+                oldStatus = info;
+                $(this).empty();
+                $(this).append('<textarea class="form-control" id="textAreaInfoProcess" rows="5" >' + info +'</textarea>');
+                $(this).children("textarea").focus();
+            }
+        });
+        $('#airProjectTable').on('click', '.show-info-process', function(event) {
+            $('#processDetailModal').modal("show");
+            var data = processTable.row($(this).parents('tr')).data();
+            $('#infoProcessModal').text(data.info);
+            $('#profileProcessModal').text(data.address.profile.name);
+            $('#walletProcessModal').text(data.address.accountName);
+            $('#idProcessModal').val(data.id);
+        });
+
+
+        $("#formProcessDetail").submit(function (event) {
+            event.preventDefault();
+            let id = $('#idProcessModal').val()
+            var formData = {
+                info: $("#textAreaInfoProcess").val()
+            };
+            updateProcess(formData,id);
+            $('#processDetailModal').modal("hide");
         });
 
         $.ajax({

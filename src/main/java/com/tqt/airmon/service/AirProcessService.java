@@ -43,6 +43,9 @@ public class AirProcessService {
         Optional<AirProject> airProjectOptional  = projectService.getById(processDTO.getAirProject().getId());
         airProjectOptional .ifPresent(airProject -> {
             AirProcess airProcess = AirProcess.fromDTO(processDTO);
+            if (airProcess.getInfo().isEmpty()){
+                airProcess.setInfo("----------");
+            }
             Optional<AirProcess> processExisting = airProject.getProcess().stream()
                     .filter(p -> p.getAddress().getId().equals(airProcess.getAddress().getId())).findFirst();
             if (processExisting.isEmpty()){

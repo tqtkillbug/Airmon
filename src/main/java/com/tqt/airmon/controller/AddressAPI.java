@@ -63,8 +63,8 @@ public class AddressAPI {
     }
 
     @GetMapping("/export")
-    public ResponseEntity<?> exportPublicKeys(@RequestParam Long idProfile, @RequestParam String type) {
-        return ResponseEntity.ok(service.exportListPublickey(idProfile, type));
+    public ResponseEntity<?> exportPublicKeys(@RequestParam Long idProfile, @RequestParam String type,@RequestParam String chain) {
+        return ResponseEntity.ok(service.exportListPublickey(idProfile, type,chain));
     }
 
     @PostMapping("/import")
