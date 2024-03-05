@@ -43,6 +43,11 @@ public class ViewController {
         return "wallet";
     }
 
+    @GetMapping("login")
+    public String login(){
+        return "login";
+    }
+
     @GetMapping("lauch-project/{id}")
     public ModelAndView lauchProject(@PathVariable Long id){
         ModelAndView view = new ModelAndView("lauch-project");
