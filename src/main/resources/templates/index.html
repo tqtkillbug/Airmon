@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <div th:replace="fragments/head :: head('Dashboard')"></div>
 
@@ -98,24 +98,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Total Project</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
@@ -132,17 +114,18 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Pending Requests Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Project Doing</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                Total Projects</div>
+                                            <div class="h3 mb-0 font-weight-bold text-gray-900"  th:text="${dashboardData.totalProject}">18</div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                            <i class="fas fa-file-powerpoint fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -154,16 +137,49 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Project New</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                Doing Projects</div>
+                                            <div class="h4 mb-0 font-weight-bold text-gray-800" th:text="${dashboardData.totalProjectDoing}">18</div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                            <i class="fas fa-file-powerpoint fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                 New Projects</div>
+                                            <div class="h4 mb-0 font-weight-bold text-gray-800" th:text="${dashboardData.totalProjectNew}">18</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-file-powerpoint fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Close Projects</div>
+                                            <div class="h4 mb-0 font-weight-bold text-gray-800"  th:text="${dashboardData.totalProjectPending}">18</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-file-powerpoint fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
@@ -174,23 +190,7 @@
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                            <i class="fas fa-file-powerpoint fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -337,6 +337,12 @@
                     </div>
 
 
+
+                    <th:block th:each="item: ${list1}" >
+                        <th:block th:each="item, index : ${list2}" >
+                            <li th:text="${index}"></li>
+                        </th:block>
+                     </th:block>
                 </div>
                 <!-- /.container-fluid -->
             </div>

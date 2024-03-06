@@ -1,6 +1,7 @@
 package com.tqt.airmon.controller;
 
 import com.tqt.airmon.model.AirProject;
+import com.tqt.airmon.model.dto.DashboardData;
 import com.tqt.airmon.service.AirProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,8 +18,12 @@ public class ViewController {
     private AirProjectService projectService;
 
     @GetMapping()
-    public String index(){
-        return "index";
+    public ModelAndView index(){
+        ModelAndView view = new ModelAndView("index");
+        DashboardData data = new DashboardData();
+        data = projectService.setDataDashboard(data);
+        view.addObject("dashboardData",data);
+        return view;
     }
 
     @GetMapping("air-project")
@@ -46,6 +51,10 @@ public class ViewController {
     @GetMapping("login")
     public String login(){
         return "login";
+    }
+    @GetMapping("logout")
+    public String logout(){
+        return "redirect:/login";
     }
 
     @GetMapping("lauch-project/{id}")

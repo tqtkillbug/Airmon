@@ -232,7 +232,16 @@
                             }
                             return '<a href="' + data + '" target="_blank">' + data + '</a>';
                         }},
-                    { data: 'status',className: "font-weight-bold text-success" },
+                    { data: 'status',className: "font-weight-bold",
+                        render: function (data, type, row) {
+                        if (data === "NEW"){
+                            return `<span class="text-danger">${data}</span>`;
+                        } else if (data ==="DOING"){
+                            return `<span class="text-warning">${data}</span>`;
+                        } else {
+                            return `<span>${data}</span>`;
+                        }
+                        }},
                     { data: 'source.name',className: "font-weight-bold "},
                     { data: 'process.length' ,className: "text-center fs-4"},
                     {
@@ -341,12 +350,10 @@
                 window.open("/lauch-project/" + data.id, '_blank');
             });
 
-            // Delete air project when clicking on Delete button
             $('#airProjectTable tbody').on('click', 'button.delete-item', function () {
                 var data = airProjectTable.row($(this).parents('tr')).data();
                 var confirmDelete = confirm("Are you sure you want to delete this Air Project?");
                 if (confirmDelete) {
-                    // Send API request to delete air project
                     $.ajax({
                         type: "DELETE",
                         url: "api/air-project/" + data.id,
