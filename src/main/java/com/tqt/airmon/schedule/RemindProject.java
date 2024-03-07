@@ -22,12 +22,37 @@ public class RemindProject {
     @Autowired
     private ApiService apiService;
 
+    private static final String DOMAIN_ADMIN = "http://129.152.0.253:8077/air-project/";
+
 //    @Scheduled(cron = "0 0 21 * * ?")
-//    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 60000)
     public void remindProject() {
         List<AirProject> airProjects = projectService.getAll();
         List<AirProject> projectDoing = airProjects.stream().filter(p -> p.getStatus().equals(AirProjectService.STATUS_DOING)).collect(Collectors.toList());
         List<AirProject> projectNew = airProjects.stream().filter(p -> p.getStatus().equals(AirProjectService.STATUS_NEW)).collect(Collectors.toList());
-        String res = apiService.callPostApi("http://demo6723008.mockable.io/notify","HAHHAHAHH");
+        StringBuilder build = new StringBuilder();
+        build.append("<b>|--------------------Project DOING--------------------|</b>\n");
+        for (AirProject airProject : projectDoing) {
+            build.append("<strong>Name : ").append(airProject.getName()).append("</strong>\n");
+            build.append("<strong>Link : ").append(airProject.getLinkSource()).append("</strong>\n");
+            build.append("<strong>ADmin : ").append(DOMAIN_ADMIN).append(airProject.getId()).append("</strong>\n");
+            build.append("<strong>Note : ").append(airProject.getNote()).append("</strong>\n");
+            build.append("<strong>Source : ").append(airProject.getSource().getName()).append("</strong>\n");
+//            build.append("<strong>Quantity : ").append(airProject.getProcess().size()).append("</strong>\n");
+            build.append("\n---------------------------------------------------------------\n");
+        }
+        String res = apiService.callPostApi("https://service.etasoft.tech/api/v1/free/notify/push",build.toString());
+        build = new StringBuilder();
+        build.append("<b>|--------------------Project NEW--------------------|</b>\n");
+        for (AirProject airProject : projectNew) {
+            build.append("<strong>Name : ").append(airProject.getName()).append("</strong>\n");
+            build.append("<strong>Link : ").append(airProject.getLinkSource()).append("</strong>\n");
+            build.append("<strong>Admin : ").append(DOMAIN_ADMIN).append(airProject.getId()).append("</strong>\n");
+            build.append("<strong>Note : ").append(airProject.getNote()).append("</strong>\n");
+            build.append("<strong>Source : ").append(airProject.getSource().getName()).append("</strong>\n");
+//            build.append("<strong>Quantity : ").append(airProject.getProcess().size()).append("</strong>\n");
+            build.append("\n---------------------------------------------------------------\n");
+        }
+        String res2 = apiService.callPostApi("https://service.etasoft.tech/api/v1/free/notify/push",build.toString());
     }
 }
