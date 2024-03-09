@@ -200,13 +200,15 @@
                 processing: true,
                 serverSide: false,
                 pageLength: 20,
+                order: [
+                    [0, 'desc']
+                ],
                 ajax: {
                     url: 'api/air-project/list', // Replace with your API endpoint for air projects
                     type: 'GET',
                     dataSrc: ''
                 },
-                    order: [[0, 'desc']],
-                    columns: [
+                columns: [
                     { data: 'id' },
                     { data: 'name',className: "font-weight-bold text-primary" },
                     {
