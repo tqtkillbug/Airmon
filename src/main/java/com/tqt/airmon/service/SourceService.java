@@ -20,6 +20,9 @@ public class SourceService {
     public List<Source> getAll(){
         return repository.findAll();
     }
+    public Source getSourceByLink(String link){
+        return repository.findByLink(link);
+    }
 
     public Source getById(Long id) {
         return repository.findById(id).get();
@@ -35,5 +38,12 @@ public class SourceService {
         existingSource.setName(updatedSource.getName());
         existingSource.setLink(updatedSource.getLink());
         return repository.save(existingSource);
+    }
+
+    public Source insertSourceNew(String sourName, String sourceLink){
+        Source source = new Source();
+        source.setName(sourName);
+        source.setLink(sourceLink);
+        return insert(source);
     }
 }

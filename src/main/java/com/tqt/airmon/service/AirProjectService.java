@@ -1,12 +1,14 @@
 package com.tqt.airmon.service;
 
 import com.tqt.airmon.model.AirProject;
+import com.tqt.airmon.model.Source;
 import com.tqt.airmon.model.dto.DashboardData;
 import com.tqt.airmon.repository.AirProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,6 +23,9 @@ public class AirProjectService {
 
     @Autowired
     private AirProjectRepository  repository;
+
+    @Autowired
+    private SourceService sourceService;
 
     public AirProject insert(AirProject project){
         return repository.save(project);
@@ -68,4 +73,37 @@ public class AirProjectService {
         data.setTotalProjectClose(totalClose);
         return  data;
     }
+
+    private boolean existBySourceLink(String sourceLink){
+        return repository.existsByLinkSource(sourceLink);
+    }
+
+    public void handleAirprojectFromEta(AirProject airProject) {
+        if (Objects.isNull(airProject)) return;
+
+        if (existBySourceLink(airProject.getSourceLink())) return;
+
+        String sourceChanelLink = airProject.getSourceChanelLink();
+        Source exsitSource = sourceService.getSourceByLink(sourceChanelLink);
+        if (Objects.isNull(exsitSource)){
+            exsitSource = sourceService.insertSourceNew(airProject.getSourceName(),sourceChanelLink);
+        }
+        airProject.setSource(exsitSource);
+        airProject.setStatus(STATUS_NEW);
+        airProject.setName(getTitle(airProject.getDescription()));
+        airProject.setLinkSource(airProject.getSourceLink());
+        insert(airProject);
+    }
+
+    public static String getTitle(String inputString) {
+        String[] wordsArray = inputString.split("\\s+");
+        int wordsToExtract = Math.min(5, wordsArray.length);
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < wordsToExtract; i++) {
+            result.append(wordsArray[i]).append(" ");
+        }
+        return result.toString().trim();
+    }
+
+
 }

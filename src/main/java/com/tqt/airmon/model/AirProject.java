@@ -35,4 +35,8 @@ public class AirProject {
     @OneToMany(mappedBy = "airProject", cascade = CascadeType.ALL)
     private List<AirProcess> process = new ArrayList<>();
 
+    private String sourceName;
+    private String sourceLink;
+    private String sourceChanelLink;
+
 }

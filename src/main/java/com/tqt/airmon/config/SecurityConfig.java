@@ -39,21 +39,23 @@ public class SecurityConfig {
     // Configuring HttpSecurity
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-     return    http.csrf().disable()
+        return http
+                .csrf().disable()
                 .authorizeRequests()
-             .antMatchers("/login").permitAll()
-             .antMatchers("/api/login").permitAll()
-             .antMatchers("/js/**").permitAll()
-             .antMatchers("/vendor/**").permitAll()
-             .antMatchers("/css/**").permitAll()
+                .antMatchers("/login", "/api/login", "/free/api/**", "/js/**", "/vendor/**", "/css/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-             .logout(logout -> logout
-                     .logoutUrl("/logout")
-                     .addLogoutHandler(new SecurityContextLogoutHandler())
-             ).build();
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .addLogoutHandler(new SecurityContextLogoutHandler())
+                )
+                .exceptionHandling()
+                .accessDeniedPage("/login")
+                .and()
+                .build();
+
     }
 
     // Password Encoding
