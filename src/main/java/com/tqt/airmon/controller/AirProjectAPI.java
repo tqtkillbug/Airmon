@@ -45,7 +45,7 @@ public class AirProjectAPI {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProfile(@PathVariable Long id, @RequestBody AirProject project) {
+    public ResponseEntity<?> updateProject(@PathVariable Long id, @RequestBody AirProject project) {
         AirProject updateWallet = airProjectService.updateProject(id, project);
         return ResponseEntity.ok(updateWallet);
     }

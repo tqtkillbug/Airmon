@@ -50,12 +50,24 @@ public class AirProjectService {
     public AirProject updateProject(Long id, AirProject project) {
         AirProject existingProject = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Source not found"));
-        existingProject.setName(project.getName());
-        existingProject.setDescription(project.getDescription());
-        existingProject.setNote(project.getNote());
-        existingProject.setSource(project.getSource());
-        existingProject.setStatus(project.getStatus());
-        existingProject.setLinkSource(project.getLinkSource());
+        if (project.getName() != null){
+            existingProject.setName(project.getName());
+        }
+        if (project.getDescription() != null){
+            existingProject.setDescription(project.getDescription());
+        }
+        if (project.getNote() != null){
+            existingProject.setNote(project.getNote());
+        }
+        if (project.getSource() != null){
+            existingProject.setSource(project.getSource());
+        }
+        if (project.getStatus() != null){
+            existingProject.setStatus(project.getStatus());
+        }
+        if (project.getLinkSource() != null){
+            existingProject.setLinkSource(project.getLinkSource());
+        }
         return repository.save(existingProject);
     }
 

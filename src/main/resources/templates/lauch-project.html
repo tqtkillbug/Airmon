@@ -40,11 +40,14 @@
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
                                     <div class="row">
-                                        <div class="col-11">
+                                        <div class="col-10">
                                             <h5 class="m-0 font-weight-bold text-primary text-center" ><span th:text="${project.name}"></span> - <span class="text-danger" th:text="${project.status}"></span> </h5>
                                         </div>
                                         <div class="col-1">
-                                            <a class="btn btn-warning" th:href="@{'/air-project?editProject=' + ${project.id}}"><i class="fas fa-edit"></i></a>
+                                            <button class="btn btn-danger" id="cancelEditDes"><i class="fas fa-edit"></i></button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button class="btn btn-warning" id="editDescription"><i class="fas fa-edit"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -53,7 +56,7 @@
                                     <!-- Description -->
                                     <div class="mb-3">
                                         <label class="form-label fw-bold font-weight-bold">Description:</label>
-                                        <p class="form-control-static bg-light p-3 rounded" style="white-space: pre-line" th:text="${project.description}"></p>
+                                        <p class="form-control-static bg-light p-3 rounded" id="projectDes" style="white-space: pre-line" th:text="${project.description}"></p>
                                     </div>
 
                                     <!-- Note -->
@@ -230,7 +233,7 @@
 <script>
     $(document).ready(function() {
         var oldStatus = "";
-        var oldInfo = "";
+        var oldDes = "";
 
         var processTable = $('#airProjectTable').DataTable({
             paging: true,
@@ -281,9 +284,6 @@
             var newStatus = $(this).val();
             var myValue = $(this).val();
             var $parent = $(this).parent();
-            console.log(newStatus)
-            console.log(myValue)
-            console.log($parent)
             if (oldStatus !== newStatus){
                 $(this).remove();
                 var data = processTable.row($parent.parents('tr')).data();
@@ -410,6 +410,51 @@
             }
         });
     }
+
+        $('#editDescription').on('click', function(event) {
+            let projectDes = $("#projectDes");
+            let descript = projectDes.text();
+             oldDes = descript;
+            if(projectDes.find('textarea').length === 0) {
+                projectDes.empty();
+                projectDes.append('<textarea class="form-control" id="textAreaDesProject" rows="30">' + descript +'</textarea>');
+                projectDes.children("textarea").focus();
+            } else{
+                let textArea = $("#textAreaDesProject");
+                if (textArea){
+                    let desUpdate = textArea.val();
+                    updateDesProject(desUpdate,$("#idProject").val())
+                    projectDes.html(desUpdate);
+                    textArea.remove();
+                }
+            }
+        });
+
+
+        $('#cancelEditDes').on('click', function(event) {
+            let projectDes = $("#projectDes");
+            let textArea = $("#textAreaDesProject");
+            projectDes.html(oldDes);
+            textArea.remove();
+        });
+
+        function updateDesProject(description,id) {
+            var formData = {
+                description: description
+            };
+            $.ajax({
+                type: "PUT",
+                url: "/api/air-project/" + id,
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function () {
+                        Common.showToastSuccess("Update Success!")
+                },
+                error: function (error) {
+                    Common.showToastError(error.responseText);
+                }
+            });
+        }
 
 
     });
