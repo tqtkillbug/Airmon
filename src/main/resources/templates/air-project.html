@@ -245,7 +245,13 @@
                             return `<span>${data}</span>`;
                         }
                         }},
-                    { data: 'source.name',className: "font-weight-bold "},
+                    { data: 'source.name',className: "font-weight-bold ",
+                        render: function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                return data.length > 15 ? data.substr(0, 15) + '...' : data;
+                            }
+                            return data;
+                        }},
                     { data: 'process.length' ,className: "text-center fs-4"},
                     {
                         data: null,
