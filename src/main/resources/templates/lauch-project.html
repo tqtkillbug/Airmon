@@ -41,7 +41,7 @@
                                 <div class="card-header py-3">
                                     <div class="row">
                                         <div class="col-1">
-                                            <button class="btn btn-outline-secondary" id="setRemind"><i class="fas fa-bell"></i></button>
+                                            <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#settingRemindModal" ><i class="fas fa-bell"></i></button>
                                         </div>
                                         <div class="col-9">
                                             <h5 class="m-0 font-weight-bold text-primary text-center" ><span th:text="${project.name}"></span> - <span class="text-danger" th:text="${project.status}"></span> </h5>
@@ -192,6 +192,46 @@
         </div>
     </div>
 
+    <div class="modal fade" id="settingRemindModal" tabindex="-1" role="dialog" aria-labelledby="settingRemindModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titleSetRemind" >Set Remind</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                <form id="setRemindForm">
+                    <div id="body-form-remind">
+                    <div class="mb-3">
+                        <label for="titleRemind" class="form-label">Title:</label>
+                        <input type="text" class="form-control" id="titleRemind">
+                    </div>
+                    <div class="mb-3">
+                        <label  class="form-label">Type:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="type_remind" value="0" id="onetime">
+                            <label class="form-check-label" for="onetime">
+                                One Time
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="type_remind" value="1" id="repeat">
+                            <label class="form-check-label" for="repeat">
+                                Repeat
+                            </label>
+                        </div>
+                    </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="processDetailModal" tabindex="-1" aria-labelledby="processDetailModal" aria-hidden="true">
         <div class="modal-dialog">
@@ -227,33 +267,7 @@
         </div>
     </div>
 
-        <div class="modal fade" id="settingRemindModal" tabindex="-1" aria-labelledby="processDetailModal" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" >Setting Remind</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formSettingRemind">
-                            <div class="mb-3">
-                                <label for="walletProcessModal" class="form-label fw-bold font-weight-bold">Type Remind:</label>
-                            </div>
-                            <div class="mb-3">
-                                <label for="profileProcessModal" class="form-label fw-bold font-weight-bold">Profile:</label>
-                            </div>
-                            <div class="mb-3">
-                                <label for="infoProcessModal" class="form-label fw-bold font-weight-bold">Info:</label>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-warning">Save</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+
 
     <!-- Scroll to Top Button-->
     <div th:replace="fragments/bottom :: bottom"></div>
@@ -486,6 +500,85 @@
                 }
             });
         }
+
+
+        $('input[type=radio][name=type_remind]').change(function() {
+            if (this.value == 0) {
+                $('#timeRepeatPicker').parent().remove();
+                $('#repeatStep').parent().remove();
+                let el = ` <div class="mb-3">
+                            <label for="oneTimeDatePicker" class="form-label fw-bold font-weight-bold">Date:</label>
+                            <input type="text" id="oneTimeDatePicker"/>
+                           </div>`
+                $("#body-form-remind").append(el)
+                $('#oneTimeDatePicker').datetimepicker({
+                    format:'Y/m/d H:i',
+                    formatTime:'H:i',
+                    formatDate:'Y/m/d'
+                });
+            }else if (this.value == 1) {
+                $('#oneTimeDatePicker').parent().remove();
+                let elTimePicker = ` <div class="mb-3">
+                            <label for="timeRepeatPicker" class="form-label fw-bold font-weight-bold">Time Repeat:</label>
+                            <input type="text" id="timeRepeatPicker"/>
+                        </div>`
+                $("#body-form-remind").append(elTimePicker);
+                $('#timeRepeatPicker').datetimepicker({
+                    datepicker:false,
+                    format:'H:i',
+                    step:5
+                });
+                let elRepeatStep = `
+                        <div class="mb-3">
+                            <label for="repeatStep" class="form-label">Repeat Step:</label>
+                            <select class="form-select custom-select-box" id="repeatStep" required>
+                                <option value='1_DAY'>Every Day</option>
+                                <option value='1_WEEK'>Every Week</option>
+                                <option value='1_MONTH'>Every mon</option>
+                            </select>
+                        </div>`
+                $("#body-form-remind").append(elRepeatStep);
+            }
+        });
+
+        $("#setRemindForm").submit(function (event) {
+            event.preventDefault();
+            let data = {
+                type : document.querySelector('input[name="type_remind"]:checked').value,
+                title : $("#titleRemind").val(),
+                airProject : {
+                    id : $("#idProject").val()
+                },
+                date: $("#oneTimeDatePicker").val(),
+                repeatType: $("#repeatStep").val(),
+            }
+            if (data.type == 1){
+                let time = $("#timeRepeatPicker").val().split(":");
+                let hour = time[0];
+                let min = time[1];
+                data.hour = hour;
+                data.min = min;
+            }
+            insertRemind(data);
+            $('#setRemindForm').modal("hide");
+        });
+
+        function insertRemind(data) {
+            $.ajax({
+                type: "POST",
+                url: "/api/remind",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function () {
+                    Common.showToastSuccess("Insert Remind Success!")
+                },
+                error: function (error) {
+                    Common.showToastError(error.responseText);
+                }
+            });
+        }
+
+
 
 
     });
