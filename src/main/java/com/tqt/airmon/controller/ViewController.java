@@ -65,4 +65,9 @@ public class ViewController {
         return view;
     }
 
+    @GetMapping("batch-request")
+    public String batchRequestView(){
+        return "batch-request";
+    }
+
 }

@@ -5,6 +5,8 @@ import com.tqt.airmon.model.Source;
 import com.tqt.airmon.model.dto.DashboardData;
 import com.tqt.airmon.repository.AirProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,6 +47,15 @@ public class AirProjectService {
 
     public void deleteById(Long id){
         repository.deleteById(id);
+    }
+
+
+    public Page<AirProject> getAirProjects(Pageable pageable, String searchValue) {
+        if (searchValue == null || searchValue.isEmpty()) {
+            return repository.findAll(pageable);
+        } else {
+            return repository.findByNameContainingIgnoreCase(searchValue, pageable);
+        }
     }
 
     public AirProject updateProject(Long id, AirProject project) {

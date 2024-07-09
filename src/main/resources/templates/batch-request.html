@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<div th:replace="fragments/head :: head('Source Manage')"></div>
+<!-- Custom styles for this page -->
+<link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<style>
+    .log-div {
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        max-height: 300px; /* Điều chỉnh chiều cao tối đa của log-div */
+        overflow-y: auto; /* Cho phép scroll khi nội dung vượt quá chiều cao */
+    }
+    .log-div pre {
+        white-space: pre-wrap;
+        font-size: 14px;
+        background-color: #f8f9fa;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
+        overflow-x: auto;
+    }
+    .log-div > div {
+        margin-bottom: 30px;
+    }
+</style>
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <div th:replace="fragments/sliderbar :: sliderbar"></div>
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <div th:replace="fragments/topbar :: topbar"></div>
+
+                <!-- Create/Edit Form -->
+
+                <div class="container-fluid mt-2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card ">
+                                <div class="card-header bg-gradient-info">
+                                    <h4 class="text-center text-white">Batch Request Utils</h4>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Create/Edit Form -->
+                                    <form id="batchForm">
+                                        <div class="mb-3">
+                                            <label for="urlRequest" class="form-label">Url request:</label>
+                                            <input type="text" class="form-control" id="urlRequest" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="arrayItem" class="form-label">Data bind:</label>
+                                            <textarea name="arrayItem" class="form-control" id="arrayItem" cols="30" rows="7"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary align-self-center">Run</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card log-div" id="logoutput">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- End of Main Content -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <div th:replace="fragments/bottom :: bottom"></div>
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#batchForm").submit(async function (event) {
+                event.preventDefault();
+                $("#logoutput").html("");
+                let url = $("#urlRequest").val();
+                let arrayLink = $("#arrayItem").val().split("\n");
+                let count = 1;
+                for (const item of arrayLink) {
+                    if (item === "" || item === undefined) continue;
+                    let data =  await callGetBatch(url + item);
+                    renderLog(data,count,url)
+                    count++;
+                }
+                Common.showToastSuccess("Batch requesting success!");
+            });
+
+
+            async function callGetBatch(url) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET'
+                    });
+                    console.log(response);
+                    if (response.ok){
+                        return await response.json();
+                    }
+                    return null
+                } catch (error) {
+                    return null
+                    console.error('There has been a problem with your fetch operation:', error);
+                }
+            }
+
+            function renderLog(data,index,url){
+                let status = 200;
+                if (data === undefined || data === null || data === ""){
+                    status = 400;
+                    data = {}
+                }
+
+                let html = `  <div >
+                                    <div><strong>URL[${index}]:</strong> <a href="${url}">${url}</a></div>
+                                    <div><strong>STATUS:</strong> ${status} </div>
+                                    <div><strong>RESPONSE:</strong></div>
+                                    <pre class="code-block">
+                                        ${JSON.stringify(data)}
+                                    </pre>
+                                </div>`
+
+                $("#logoutput").append(html);
+
+            }
+
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>

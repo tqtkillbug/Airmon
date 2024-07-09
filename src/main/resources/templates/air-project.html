@@ -198,24 +198,39 @@
                 searching: true,
                 ordering: true,
                 processing: true,
-                serverSide: false,
-                pageLength: 20,
+                serverSide: true,
+                pageLength: 15,
                 order: [
                     [0, 'desc']
                 ],
-                ajax: {
-                    url: 'api/air-project/list', // Replace with your API endpoint for air projects
-                    type: 'GET',
-                    dataSrc: ''
+                  ajax: {
+                      url: 'api/air-project/list',
+                      type: 'GET',
+                      data: function(d) {
+                            // Thêm các tham số phân trang vào yêu cầu AJAX
+                            return $.extend({}, d, {
+                                // Bạn có thể thêm các tham số tùy chỉnh khác ở đây nếu cần
+                            });
+                        },
+                        dataSrc: function (json) {
+                            return json.data;
+                        }
                 },
                 columns: [
                     { data: 'id' },
-                    { data: 'name',className: "font-weight-bold text-primary" },
+                    { data: 'name',className: "font-weight-bold text-primary",
+                        render: function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                return data.length > 30 ? data.substr(0, 30) + '...' : data;
+                            }
+                            return data;
+                        }
+                    },
                     {
                         data: 'description',
                         render: function (data, type, row) {
                             if (type === 'display' || type === 'filter') {
-                                return data.length > 30 ? data.substr(0, 30) + '...' : data;
+                                return data.length > 25 ? data.substr(0, 25) + '...' : data;
                             }
                             return data;
                         }
